@@ -34,7 +34,7 @@ const ImportModal = ({ isOpen, onClose, onSelect }) => {
                 <div className="space-y-4">
                     <div>
                         <label className="text-[8px] font-bold text-blue-500 uppercase mb-1 block">Selecione o Cliente</label>
-                        <select 
+                        <select
                             className="w-full bg-slate-900 border border-blue-800 text-white p-2 rounded text-[10px]"
                             value={selectedClient}
                             onChange={(e) => setSelectedClient(e.target.value)}
@@ -47,7 +47,7 @@ const ImportModal = ({ isOpen, onClose, onSelect }) => {
                         {assessments.length > 0 ? assessments.map(a => (
                             <button key={`ass-${a.id}`} onClick={() => onSelect(a)} className="w-full text-left bg-blue-900/20 p-2 rounded border border-blue-800 hover:border-blue-500 text-[10px]">
                                 <div className="font-bold text-white">{a.assessmentName}</div>
-                                <div className="text-[8px] opacity-50">{a.dataAvaliacao ? new Date(a.dataAvaliacao.seconds*1000).toLocaleDateString() : 'N/A'}</div>
+                                <div className="text-[8px] opacity-50">{a.dataAvaliacao ? new Date(a.dataAvaliacao.seconds * 1000).toLocaleDateString() : 'N/A'}</div>
                             </button>
                         )) : <div className="text-center p-4 opacity-30 italic">Nenhuma avaliação encontrada</div>}
                     </div>
@@ -57,7 +57,6 @@ const ImportModal = ({ isOpen, onClose, onSelect }) => {
     );
 };
 
-// --- MODAL DE AJUDA (TUTORIAL) ---
 // --- MODAL DE AJUDA (TUTORIAL CONTEXTUAL) ---
 const HelpModal = ({ isOpen, onClose, currentTab }) => {
     if (!isOpen) return null;
@@ -72,7 +71,7 @@ const HelpModal = ({ isOpen, onClose, currentTab }) => {
     return (
         <div className="fixed inset-0 z-[120] flex items-start justify-center p-4 pt-10 bg-black/90 backdrop-blur-sm animate-fade">
             <div className="bg-slate-900 w-full max-w-3xl rounded-xl border border-blue-500 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                
+
                 {/* Header do Modal */}
                 <div className="bg-slate-800 p-4 border-b border-blue-700 flex justify-between items-center shrink-0">
                     <div>
@@ -87,10 +86,10 @@ const HelpModal = ({ isOpen, onClose, currentTab }) => {
                         <i className="fas fa-times text-xl"></i>
                     </button>
                 </div>
-                
+
                 {/* Conteúdo Dinâmico por Aba */}
                 <div className="p-6 overflow-y-auto custom-scroll space-y-6 text-blue-100/90 text-[11px] leading-relaxed">
-                    
+
                     {/* CONTEÚDO DA ABA 1: QUESTIONÁRIO */}
                     {currentTab === 'questionario' && (
                         <div className="space-y-6 animate-fade">
@@ -166,14 +165,14 @@ const HelpModal = ({ isOpen, onClose, currentTab }) => {
                                     <i className="fas fa-cogs"></i> Funcionamento Técnico (Under the Hood)
                                 </h3>
                                 <div className="space-y-3 text-[10px]">
-                                    <p><strong>Trigger Automático de Regras:</strong> A constante <code>triggeredRules</code> itera sobre todas as regras cadastradas (que são salvas na config global do Firestore). Se a regra aponta para "MÉDIA GERAL", ele cruza o operador (`<, >, ==, etc`) contra o cálculo de média de todo o radar. Se aponta para uma pergunta, avalia pontualmente. Apenas regras que retornam <em>TRUE</em> aparecem no dropdown de contexto.</p>
+                                    <p><strong>Trigger Automático de Regras:</strong> A constante <code>triggeredRules</code> itera sobre todas as regras cadastradas (que são salvas na config global do Firestore). Se a regra aponta para "MÉDIA GERAL", ele cruza o operador (&lt;, &gt;, ==, etc) contra o cálculo de média de todo o radar. Se aponta para uma pergunta, avalia pontualmente. Apenas regras que retornam <em>TRUE</em> aparecem no dropdown de contexto.</p>
                                     <p><strong>Cálculo Rápido de Oportunidades (Listas Expansíveis):</strong> O sistema classifica perguntas em duas matrizes dinâmicas. Tudo que pontuou maior que 3 (4 e 5) cai em "Pontos Fortes". Tudo que pontuou menor ou igual a 3 (mas maior que 0) cai como "Oportunidades".</p>
                                     <p><strong>Montagem do Prompt da IA:</strong> O botão roxo concatena variáveis dinamicamente. Ele injeta o texto livre do líder, o Array mapeado das regras engatilhadas + os comentários salvos sobre elas, e os top 15 itens mais fracos ou fortes para formar um bloco de contexto perfeito para LLMs.</p>
                                 </div>
                             </section>
                         </div>
                     )}
-                    
+
                     <div className="bg-blue-900/40 p-3 rounded border border-blue-800 text-center italic text-blue-400 mt-4">
                         "O objetivo não é apenas medir, mas gerar conversas de valor e planos acionáveis."
                     </div>
@@ -247,14 +246,14 @@ const ComparisonModal = ({ isOpen, onClose, onSelect }) => {
                         <option value="">Selecione o Cliente...</option>
                         {clients.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
-                    
+
                     <div className="max-h-60 overflow-y-auto custom-scroll space-y-1">
                         {assessments.map(a => (
-                            <button key={a.id} onClick={() => onSelect(a)} 
+                            <button key={a.id} onClick={() => onSelect(a)}
                                 className="w-full text-left p-2 rounded bg-blue-900/40 hover:bg-blue-600 border border-blue-800/50 hover:border-blue-300 transition-all group">
                                 <div className="text-[10px] font-bold text-white group-hover:text-white">{a.assessmentName}</div>
                                 <div className="text-[8px] text-blue-400 group-hover:text-blue-200">
-                                    {a.dataAvaliacao ? new Date(a.dataAvaliacao.seconds*1000).toLocaleDateString() : '-'}
+                                    {a.dataAvaliacao ? new Date(a.dataAvaliacao.seconds * 1000).toLocaleDateString() : '-'}
                                 </div>
                             </button>
                         ))}
@@ -319,35 +318,35 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
     });
 
     const activeRoles = roles.filter(r => !r.hidden);
-    
+
     // 1. Verifica o que o usuário clicou
-    const rolesToShow = filter.type === 'role' 
-        ? activeRoles.filter(r => r.nome === filter.id) 
+    const rolesToShow = filter.type === 'role'
+        ? activeRoles.filter(r => r.nome === filter.id)
         : activeRoles;
 
     const roleChartData = {
         labels: model.filter(e => !e.hidden).map(e => e.nome),
-        
+
         // 2. Usamos o rolesToShow em vez de activeRoles
         datasets: rolesToShow.map((role) => {
-            
+
             // 3. UX: Manter a cor exata do botão no gráfico!
             // Para isso, buscamos a posição original do papel na lista completa
             const originalIdx = activeRoles.findIndex(r => r.id === role.id);
             const idxToUse = originalIdx > -1 ? originalIdx : 0;
-            
+
             const color = `hsla(${210 + (idxToUse * 30)}, 70%, 50%, 0.4)`;
             const border = `hsla(${210 + (idxToUse * 30)}, 70%, 50%, 1)`;
-            
+
             return {
-                label: role.nome, 
-                backgroundColor: color, 
-                borderColor: border, 
+                label: role.nome,
+                backgroundColor: color,
+                borderColor: border,
                 borderWidth: 1,
                 data: model.filter(e => !e.hidden).map(axis => {
                     const roleQs = [];
-                    axis.subgrupos.forEach(s => s.perguntas.forEach(p => { 
-                        if (!p.hidden && p.papel === role.nome) roleQs.push(p); 
+                    axis.subgrupos.forEach(s => s.perguntas.forEach(p => {
+                        if (!p.hidden && p.papel === role.nome) roleQs.push(p);
                     }));
                     return calcScore(respostas, roleQs);
                 })
@@ -358,7 +357,7 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
     const getSlotData = (slotData) => {
         if (!slotData) return null;
         const slotRespostas = slotData.respostas || {};
-        const color = slotData.isCurrent ? '#3b82f6' : '#fbbf24'; 
+        const color = slotData.isCurrent ? '#3b82f6' : '#fbbf24';
         const bg = slotData.isCurrent ? 'rgba(59, 130, 246, 0.2)' : 'rgba(251, 191, 36, 0.2)';
 
         let labels = [], data = [];
@@ -372,14 +371,14 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
             labels = model.filter(e => !e.hidden).map(e => e.nome);
             data = model.filter(e => !e.hidden).map(axis => {
                 const roleQs = [];
-                axis.subgrupos.forEach(s => s.perguntas.forEach(p => { if(!p.hidden && p.papel === filter.id) roleQs.push(p); }));
+                axis.subgrupos.forEach(s => s.perguntas.forEach(p => { if (!p.hidden && p.papel === filter.id) roleQs.push(p); }));
                 return calcScore(slotRespostas, roleQs);
             });
         } else {
             labels = model.filter(e => !e.hidden).map(e => e.nome);
             data = model.filter(e => !e.hidden).map(axis => {
                 const allQs = [];
-                axis.subgrupos.forEach(s => s.perguntas.forEach(p => { if(!p.hidden) allQs.push(p); }));
+                axis.subgrupos.forEach(s => s.perguntas.forEach(p => { if (!p.hidden) allQs.push(p); }));
                 return calcScore(slotRespostas, allQs);
             });
         }
@@ -389,11 +388,11 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
     const getQuestionsByScore = () => {
         const list = [];
         model.forEach(axis => {
-            if(axis.hidden) return;
+            if (axis.hidden) return;
             axis.subgrupos.forEach(sub => {
-                if(sub.hidden) return;
+                if (sub.hidden) return;
                 sub.perguntas.forEach(p => {
-                    if(p.hidden) return;
+                    if (p.hidden) return;
                     const val = respostas[p.id] || 0;
                     if (val === scoreFilter) list.push({ ...p, eixo: axis.nome, sub: sub.nome });
                 });
@@ -411,14 +410,14 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
                     <p className="text-[10px] text-blue-400">Analise os eixos, papéis e compare cenários.</p>
                 </div>
                 <div className="text-right bg-slate-900/50 p-2 rounded-lg border border-blue-800/50">
-                     <span className="text-[8px] uppercase tracking-widest text-blue-500 block">Filtro Dinâmico Ativo</span>
-                     <span className="text-sm font-bold text-amber-400">{filter.label}</span>
-                     {filter.type !== 'geral' && (
-                        <button onClick={() => setFilter({type:'geral', id:null, label:'Visão Geral'})} 
+                    <span className="text-[8px] uppercase tracking-widest text-blue-500 block">Filtro Dinâmico Ativo</span>
+                    <span className="text-sm font-bold text-amber-400">{filter.label}</span>
+                    {filter.type !== 'geral' && (
+                        <button onClick={() => setFilter({ type: 'geral', id: null, label: 'Visão Geral' })}
                             className="ml-2 px-2 py-0.5 rounded bg-red-900/30 text-[8px] text-red-400 hover:text-white hover:bg-red-900 transition-all">
                             <i className="fas fa-times mr-1"></i>Limpar
                         </button>
-                     )}
+                    )}
                 </div>
             </div>
 
@@ -439,13 +438,13 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
                 <div className="md:col-span-3">
                     <h3 className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-4 border-b border-blue-800 pb-2"><i className="fas fa-users mr-2"></i>2. Comparativo de Papéis</h3>
                     <div className="h-80 bg-slate-800/50 p-4 rounded-xl border border-blue-800">
-                        <ChartComponent type="radar" data={roleChartData} options={{...commonOptions, plugins: { legend: { display: false } } }} />
+                        <ChartComponent type="radar" data={roleChartData} options={{ ...commonOptions, plugins: { legend: { display: false } } }} />
                     </div>
                 </div>
                 <div className="md:col-span-1 flex flex-col justify-center gap-2">
-                     <div className="text-[9px] text-blue-500 uppercase font-bold text-center mb-2">Filtrar por Papel</div>
-                     <button onClick={() => setFilter({type:'geral', id:null, label:'Visão Geral'})} className={`p-2 rounded text-[9px] border ${filter.type==='geral' ? 'bg-amber-600 text-white border-amber-400' : 'bg-blue-900/20 text-blue-400 border-blue-800'}`}>TODOS OS PAPÉIS</button>
-                     {activeRoles.map((r, idx) => (
+                    <div className="text-[9px] text-blue-500 uppercase font-bold text-center mb-2">Filtrar por Papel</div>
+                    <button onClick={() => setFilter({ type: 'geral', id: null, label: 'Visão Geral' })} className={`p-2 rounded text-[9px] border ${filter.type === 'geral' ? 'bg-amber-600 text-white border-amber-400' : 'bg-blue-900/20 text-blue-400 border-blue-800'}`}>TODOS OS PAPÉIS</button>
+                    {activeRoles.map((r, idx) => (
                         <button key={r.id} onClick={() => setFilter({ type: 'role', id: r.nome, label: `Papel: ${r.nome}` })}
                             className={`flex items-center gap-2 p-2 rounded text-[9px] transition-all border ${filter.id === r.nome ? 'bg-blue-800 border-amber-500 text-white' : 'bg-blue-900/20 border-transparent text-blue-300 hover:bg-blue-900'}`}>
                             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: `hsla(${210 + (idx * 30)}, 70%, 50%, 1)` }}></span>
@@ -460,7 +459,7 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
                     <span><i className="fas fa-scale-balanced mr-2"></i>3. Comparador ({filter.label})</span>
                     <span className="text-[8px] opacity-50 lowercase">Clique nos cartões vazios para carregar</span>
                 </h3>
-                
+
                 <div className="grid grid-cols-3 gap-4">
                     {[0, 1, 2].map(idx => {
                         const slotData = slots[idx];
@@ -481,7 +480,7 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
                                         <div className="w-full h-full relative">
                                             <div className="absolute top-0 w-full text-center text-[8px] text-white opacity-60 truncate">{slotData.assessmentName}</div>
                                             <div className="pt-4 h-full">
-                                                <ChartComponent type="radar" data={chartData} options={{...commonOptions, scales: { r: { ...commonOptions.scales.r, pointLabels: { display: false }}}}} />
+                                                <ChartComponent type="radar" data={chartData} options={{ ...commonOptions, scales: { r: { ...commonOptions.scales.r, pointLabels: { display: false } } } }} />
                                             </div>
                                         </div>
                                     ) : (
@@ -508,9 +507,9 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
                             <span>Nota Selecionada</span>
                             <span className="text-amber-400 text-lg">{RATING_MAP[scoreFilter]}</span>
                         </div>
-                        <input 
-                            type="range" min="0" max="5" step="1" 
-                            value={scoreFilter} 
+                        <input
+                            type="range" min="0" max="5" step="1"
+                            value={scoreFilter}
                             onChange={(e) => setScoreFilter(parseInt(e.target.value))}
                             className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400"
                         />
@@ -524,9 +523,9 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
                     {filteredQuestions.length > 0 ? filteredQuestions.map(q => (
                         <div key={`q-filter-${q.id}`} className="flex items-center gap-3 bg-blue-900/20 p-3 rounded border border-blue-800/50 hover:border-blue-500 transition-colors">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border 
-                                ${scoreFilter >= 4.5 ? 'bg-blue-900 text-blue-400 border-blue-600' : 
-                                  scoreFilter >= 2.5 ? 'bg-yellow-900 text-yellow-400 border-yellow-600' : 
-                                  'bg-red-900 text-red-400 border-red-600'}`}>
+                                ${scoreFilter >= 4.5 ? 'bg-blue-900 text-blue-400 border-blue-600' :
+                                    scoreFilter >= 2.5 ? 'bg-yellow-900 text-yellow-400 border-yellow-600' :
+                                        'bg-red-900 text-red-400 border-red-600'}`}>
                                 {scoreFilter}
                             </div>
                             <div className="flex-grow">
@@ -545,8 +544,8 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
                 </div>
             </div>
 
-            <ComparisonModal 
-                isOpen={targetSlot !== null} 
+            <ComparisonModal
+                isOpen={targetSlot !== null}
                 onClose={() => setTargetSlot(null)}
                 onSelect={(assessment) => {
                     const newSlots = [...slots];
@@ -584,9 +583,9 @@ const QuestionnaireTab = ({ model, setModel, roles, setRoles, respostas, setResp
                                         <div className="absolute right-1 flex gap-1 opacity-0 group-hover:opacity-100 bg-blue-900 p-1 rounded shadow-lg transition-all">
                                             <button onClick={() => setModel(moveInArray(model, idx, -1))} title="Subir"><i className="fas fa-chevron-up text-[7px]"></i></button>
                                             <button onClick={() => setModel(moveInArray(model, idx, 1))} title="Descer"><i className="fas fa-chevron-down text-[7px]"></i></button>
-                                            <button onClick={() => {const n=prompt("Nome:", e.nome); if(n){const nm=[...model];nm[idx].nome=n;setModel(nm);}}} className="text-amber-400"><i className="fas fa-edit text-[7px]"></i></button>
-                                            <button onClick={() => {const nm=[...model]; nm[idx].hidden=!nm[idx].hidden; setModel(nm);}}><i className={`fas fa-eye${e.hidden?'-slash':''} text-[7px]`}></i></button>
-                                            <button onClick={() => {if(confirm("Eliminar eixo?")) setModel(model.filter((_,i)=>i!==idx));}} className="text-red-400"><i className="fas fa-trash text-[7px]"></i></button>
+                                            <button onClick={() => { const n = prompt("Nome:", e.nome); if (n) { const nm = [...model]; nm[idx].nome = n; setModel(nm); } }} className="text-amber-400"><i className="fas fa-edit text-[7px]"></i></button>
+                                            <button onClick={() => { const nm = [...model]; nm[idx].hidden = !nm[idx].hidden; setModel(nm); }}><i className={`fas fa-eye${e.hidden ? '-slash' : ''} text-[7px]`}></i></button>
+                                            <button onClick={() => { if (confirm("Eliminar eixo?")) setModel(model.filter((_, i) => i !== idx)); }} className="text-red-400"><i className="fas fa-trash text-[7px]"></i></button>
                                         </div>
                                     )}
                                 </div>
@@ -600,12 +599,12 @@ const QuestionnaireTab = ({ model, setModel, roles, setRoles, respostas, setResp
                                 {roles.map((r, ri) => (
                                     <div key={`rmgr-${r.id}`} className={`flex items-center gap-1 px-2 py-1 rounded-full text-[8px] border ${r.hidden ? 'bg-black opacity-40' : 'bg-blue-800 text-white'}`}>
                                         {r.nome}
-                                        <button onClick={() => {const nr=[...roles]; nr[ri].hidden=!nr[ri].hidden; setRoles(nr);}}><i className={`fas fa-eye${r.hidden?'-slash':''}`}></i></button>
-                                        <button onClick={() => {if(confirm("Eliminar papel?")) setRoles(roles.filter((_,i)=>i!==ri));}} className="text-red-400"><i className="fas fa-times"></i></button>
+                                        <button onClick={() => { const nr = [...roles]; nr[ri].hidden = !nr[ri].hidden; setRoles(nr); }}><i className={`fas fa-eye${r.hidden ? '-slash' : ''}`}></i></button>
+                                        <button onClick={() => { if (confirm("Eliminar papel?")) setRoles(roles.filter((_, i) => i !== ri)); }} className="text-red-400"><i className="fas fa-times"></i></button>
                                     </div>
                                 ))}
                             </div>
-                            <button onClick={() => {const n=prompt("Novo Papel:"); if(n) setRoles([...roles, {id:generateId(), nome:n, hidden:false}]);}} className="w-full mt-2 bg-blue-900/60 text-blue-400 text-[8px] py-1 rounded border border-blue-700 hover:bg-blue-800 transition-colors">+ PAPEL</button>
+                            <button onClick={() => { const n = prompt("Novo Papel:"); if (n) setRoles([...roles, { id: generateId(), nome: n, hidden: false }]); }} className="w-full mt-2 bg-blue-900/60 text-blue-400 text-[8px] py-1 rounded border border-blue-700 hover:bg-blue-800 transition-colors">+ PAPEL</button>
                         </div>
                     )}
                     <div className="space-y-2">
@@ -628,12 +627,12 @@ const QuestionnaireTab = ({ model, setModel, roles, setRoles, respostas, setResp
                                         <h4 className="font-bold text-blue-400 text-xs">{sub.nome}</h4>
                                         {isEdit && (
                                             <div className="flex gap-2">
-                                                <button onClick={() => {const nm=[...model]; nm[activeIdx].subgrupos=moveInArray(nm[activeIdx].subgrupos, sIdx, -1); setModel(nm);}}><i className="fas fa-arrow-up text-[8px]"></i></button>
-                                                <button onClick={() => {const nm=[...model]; nm[activeIdx].subgrupos=moveInArray(nm[activeIdx].subgrupos, sIdx, 1); setModel(nm);}}><i className="fas fa-arrow-down text-[8px]"></i></button>
-                                                <button onClick={() => {const n=prompt("Nome:", sub.nome); if(n){const nm=[...model]; nm[activeIdx].subgrupos[sIdx].nome=n; setModel(nm);}}} className="text-amber-500"><i className="fas fa-edit text-[8px]"></i></button>
-                                                <button onClick={() => {const nm=[...model]; nm[activeIdx].subgrupos[sIdx].hidden=!nm[activeIdx].subgrupos[sIdx].hidden; setModel(nm);}}><i className="fas fa-eye text-[8px]"></i></button>
-                                                <button onClick={() => {if(confirm("Remover subgrupo?")){const nm=[...model]; nm[activeIdx].subgrupos.splice(sIdx,1); setModel(nm);}}} className="text-red-400"><i className="fas fa-trash text-[8px]"></i></button>
-                                                <button onClick={() => {const nm=[...model]; nm[activeIdx].subgrupos[sIdx].perguntas.push({id:generateId(), texto: "Nova Pergunta", papel: roles.filter(r=>!r.hidden)[0]?.nome||"Time", hidden:false}); setModel(nm);}} className="bg-blue-500 text-white px-2 py-0.5 rounded text-[7px] font-bold uppercase transition-all hover:bg-blue-400">Add Pergunta</button>
+                                                <button onClick={() => { const nm = [...model]; nm[activeIdx].subgrupos = moveInArray(nm[activeIdx].subgrupos, sIdx, -1); setModel(nm); }}><i className="fas fa-arrow-up text-[8px]"></i></button>
+                                                <button onClick={() => { const nm = [...model]; nm[activeIdx].subgrupos = moveInArray(nm[activeIdx].subgrupos, sIdx, 1); setModel(nm); }}><i className="fas fa-arrow-down text-[8px]"></i></button>
+                                                <button onClick={() => { const n = prompt("Nome:", sub.nome); if (n) { const nm = [...model]; nm[activeIdx].subgrupos[sIdx].nome = n; setModel(nm); } }} className="text-amber-500"><i className="fas fa-edit text-[8px]"></i></button>
+                                                <button onClick={() => { const nm = [...model]; nm[activeIdx].subgrupos[sIdx].hidden = !nm[activeIdx].subgrupos[sIdx].hidden; setModel(nm); }}><i className="fas fa-eye text-[8px]"></i></button>
+                                                <button onClick={() => { if (confirm("Remover subgrupo?")) { const nm = [...model]; nm[activeIdx].subgrupos.splice(sIdx, 1); setModel(nm); } }} className="text-red-400"><i className="fas fa-trash text-[8px]"></i></button>
+                                                <button onClick={() => { const nm = [...model]; nm[activeIdx].subgrupos[sIdx].perguntas.push({ id: generateId(), texto: "Nova Pergunta", papel: roles.filter(r => !r.hidden)[0]?.nome || "Time", hidden: false }); setModel(nm); }} className="bg-blue-500 text-white px-2 py-0.5 rounded text-[7px] font-bold uppercase transition-all hover:bg-blue-400">Add Pergunta</button>
                                             </div>
                                         )}
                                     </div>
@@ -644,9 +643,9 @@ const QuestionnaireTab = ({ model, setModel, roles, setRoles, respostas, setResp
                                                     <div className="flex-grow w-full">
                                                         <div className="flex items-center gap-2 mb-1">
                                                             {isEdit ? (
-                                                                <select 
+                                                                <select
                                                                     value={q.papel}
-                                                                    onChange={(e) => {const nm=[...model]; nm[activeIdx].subgrupos[sIdx].perguntas[pIdx].papel=e.target.value; setModel(nm);}}
+                                                                    onChange={(e) => { const nm = [...model]; nm[activeIdx].subgrupos[sIdx].perguntas[pIdx].papel = e.target.value; setModel(nm); }}
                                                                     className="bg-slate-800 text-blue-400 text-[7px] font-black uppercase rounded p-1 border border-blue-700 outline-none"
                                                                 >
                                                                     {roles.filter(r => !r.hidden).map(r => (
@@ -656,19 +655,19 @@ const QuestionnaireTab = ({ model, setModel, roles, setRoles, respostas, setResp
                                                             ) : <span className="text-[7px] text-blue-500 uppercase font-black tracking-widest">{q.papel}</span>}
                                                             {isEdit && (
                                                                 <div className="flex gap-1 ml-auto">
-                                                                    <button onClick={() => {const nm=[...model]; nm[activeIdx].subgrupos[sIdx].perguntas=moveInArray(nm[activeIdx].subgrupos[sIdx].perguntas, pIdx, -1); setModel(nm);}}><i className="fas fa-chevron-up text-[7px]"></i></button>
-                                                                    <button onClick={() => {const nm=[...model]; nm[activeIdx].subgrupos[sIdx].perguntas=moveInArray(nm[activeIdx].subgrupos[sIdx].perguntas, pIdx, 1); setModel(nm);}}><i className="fas fa-chevron-down text-[7px]"></i></button>
-                                                                    <button onClick={() => {const nm=[...model]; nm[activeIdx].subgrupos[sIdx].perguntas[pIdx].hidden=!nm[activeIdx].subgrupos[sIdx].perguntas[pIdx].hidden; setModel(nm);}} className="text-blue-500"><i className="fas fa-eye text-[7px]"></i></button>
-                                                                    <button onClick={() => {if(confirm("Remover pergunta?")){const nm=[...model]; nm[activeIdx].subgrupos[sIdx].perguntas.splice(pIdx, 1); setModel(nm);}}} className="text-red-500"><i className="fas fa-trash text-[7px]"></i></button>
+                                                                    <button onClick={() => { const nm = [...model]; nm[activeIdx].subgrupos[sIdx].perguntas = moveInArray(nm[activeIdx].subgrupos[sIdx].perguntas, pIdx, -1); setModel(nm); }}><i className="fas fa-chevron-up text-[7px]"></i></button>
+                                                                    <button onClick={() => { const nm = [...model]; nm[activeIdx].subgrupos[sIdx].perguntas = moveInArray(nm[activeIdx].subgrupos[sIdx].perguntas, pIdx, 1); setModel(nm); }}><i className="fas fa-chevron-down text-[7px]"></i></button>
+                                                                    <button onClick={() => { const nm = [...model]; nm[activeIdx].subgrupos[sIdx].perguntas[pIdx].hidden = !nm[activeIdx].subgrupos[sIdx].perguntas[pIdx].hidden; setModel(nm); }} className="text-blue-500"><i className="fas fa-eye text-[7px]"></i></button>
+                                                                    <button onClick={() => { if (confirm("Remover pergunta?")) { const nm = [...model]; nm[activeIdx].subgrupos[sIdx].perguntas.splice(pIdx, 1); setModel(nm); } }} className="text-red-500"><i className="fas fa-trash text-[7px]"></i></button>
                                                                 </div>
                                                             )}
                                                         </div>
                                                         {isEdit ? (
-                                                            <input className="w-full bg-transparent text-[10px] text-blue-50 outline-none border-b border-blue-800" value={q.texto} onChange={(e)=>{const nm=[...model]; nm[activeIdx].subgrupos[sIdx].perguntas[pIdx].texto=e.target.value; setModel(nm);}} />
+                                                            <input className="w-full bg-transparent text-[10px] text-blue-50 outline-none border-b border-blue-800" value={q.texto} onChange={(e) => { const nm = [...model]; nm[activeIdx].subgrupos[sIdx].perguntas[pIdx].texto = e.target.value; setModel(nm); }} />
                                                         ) : <div className="text-[10px] text-blue-50 font-medium leading-tight">{q.texto}</div>}
                                                     </div>
                                                     {!isEdit && (
-                                                        <select value={respostas[q.id] || 0} onChange={(e) => setRespostas({...respostas, [q.id]: parseInt(e.target.value)})} className="bg-slate-900 border border-blue-800 text-white p-1 rounded text-[9px] w-24 outline-none cursor-pointer hover:border-blue-600 transition-colors">
+                                                        <select value={respostas[q.id] || 0} onChange={(e) => setRespostas({ ...respostas, [q.id]: parseInt(e.target.value) })} className="bg-slate-900 border border-blue-800 text-white p-1 rounded text-[9px] w-24 outline-none cursor-pointer hover:border-blue-600 transition-colors">
                                                             {Object.entries(RATING_MAP).map(([v, l]) => <option key={`v-${q.id}-${v}`} value={v}>{l}</option>)}
                                                         </select>
                                                     )}
@@ -680,7 +679,7 @@ const QuestionnaireTab = ({ model, setModel, roles, setRoles, respostas, setResp
                             )
                         ))}
                         {isEdit && (
-                            <button onClick={() => {const nm=[...model]; nm[activeIdx].subgrupos.push({id:generateId(), nome:"Novo Subgrupo", hidden:false, perguntas:[]}); setModel(nm);}} className="w-full py-2 border border-dashed border-blue-800 rounded-xl text-[8px] text-blue-700 hover:text-blue-400 font-bold uppercase transition-all">+ Subgrupo</button>
+                            <button onClick={() => { const nm = [...model]; nm[activeIdx].subgrupos.push({ id: generateId(), nome: "Novo Subgrupo", hidden: false, perguntas: [] }); setModel(nm); }} className="w-full py-2 border border-dashed border-blue-800 rounded-xl text-[8px] text-blue-700 hover:text-blue-400 font-bold uppercase transition-all">+ Subgrupo</button>
                         )}
                     </div>
                 ) : (
@@ -700,7 +699,7 @@ const ExpandableList = ({ title, count, items, colorClass, icon }) => {
                 <div className="flex items-center gap-2">
                     <i className={`fas ${icon}`}></i>
                     <span className="text-[9px] font-bold uppercase tracking-widest">{title}</span>
-                    <span className={`text-[9px] font-black px-1.5 rounded-full ${colorClass.replace('border', 'bg').replace('/30','')} text-black`}>{count}</span>
+                    <span className={`text-[9px] font-black px-1.5 rounded-full ${colorClass.replace('border', 'bg').replace('/30', '')} text-black`}>{count}</span>
                 </div>
                 <i className={`fas fa-chevron-${isOpen ? 'up' : 'down'} text-[9px] opacity-50`}></i>
             </button>
@@ -723,15 +722,15 @@ const ActionPlanTab = ({ model, respostas, activeAss }) => {
     const [generalNotes, setGeneralNotes] = React.useState("");
     const [keepDoing, setKeepDoing] = React.useState("");
     const [improvements, setImprovements] = React.useState("");
-    const [ruleComments, setRuleComments] = React.useState({}); 
+    const [ruleComments, setRuleComments] = React.useState({});
     const [selectedRuleId, setSelectedRuleId] = React.useState("");
     const [isSaving, setIsSaving] = React.useState(false);
     const [customRules, setCustomRules] = React.useState([]);
-    
+
     const DEFAULT_RULE = { targetId: "GLOBAL", operator: "<", value: 3, text: "" };
     const [ruleForm, setRuleForm] = React.useState(DEFAULT_RULE);
     const [editingId, setEditingId] = React.useState(null);
-    
+
     React.useEffect(() => {
         if (activeAss && activeAss.planoAcao) {
             setGeneralNotes(activeAss.planoAcao.generalNotes || "");
@@ -776,7 +775,7 @@ const ActionPlanTab = ({ model, respostas, activeAss }) => {
     };
 
     const handleDeleteRule = async (id) => {
-        if(!confirm("Tem certeza que deseja remover esta regra permanentemente?")) return;
+        if (!confirm("Tem certeza que deseja remover esta regra permanentemente?")) return;
         const updatedRules = customRules.filter(r => r.id !== id);
         setCustomRules(updatedRules);
         if (editingId === id) handleCancelEdit();
@@ -800,22 +799,22 @@ const ActionPlanTab = ({ model, respostas, activeAss }) => {
             let matches = [];
             if (rule.targetId === 'GLOBAL') {
                 const val = globalAverage;
-                const match = (rule.operator === '<' && val < rule.value) || 
-                              (rule.operator === '>' && val > rule.value) ||
-                              (rule.operator === '<=' && val <= rule.value) ||
-                              (rule.operator === '>=' && val >= rule.value) ||
-                              (rule.operator === '==' && val == rule.value);
+                const match = (rule.operator === '<' && val < rule.value) ||
+                    (rule.operator === '>' && val > rule.value) ||
+                    (rule.operator === '<=' && val <= rule.value) ||
+                    (rule.operator === '>=' && val >= rule.value) ||
+                    (rule.operator === '==' && val == rule.value);
                 if (match) matches.push({ nome: "MÉDIA GERAL DO RADAR", nota: val.toFixed(1) });
             } else {
                 const q = flatQuestions.find(q => q.id === rule.targetId);
                 if (q) {
                     const val = respostas[q.id] || 0;
                     if (val > 0) {
-                        const match = (rule.operator === '<' && val < rule.value) || 
-                                      (rule.operator === '>' && val > rule.value) ||
-                                      (rule.operator === '<=' && val <= rule.value) ||
-                                      (rule.operator === '>=' && val >= rule.value) ||
-                                      (rule.operator === '==' && val == rule.value);
+                        const match = (rule.operator === '<' && val < rule.value) ||
+                            (rule.operator === '>' && val > rule.value) ||
+                            (rule.operator === '<=' && val <= rule.value) ||
+                            (rule.operator === '>=' && val >= rule.value) ||
+                            (rule.operator === '==' && val == rule.value);
                         if (match) matches.push({ nome: `[${q.eixo}] ${q.texto}`, nota: val });
                     }
                 }
@@ -846,9 +845,9 @@ Analise os dados do cliente "${activeAss?.clientName || 'Cliente'}".
 
 2. ANÁLISE AUTOMÁTICA & OBSERVAÇÕES ESPECÍFICAS:
 ${triggeredRules.length > 0 ? triggeredRules.map(r => {
-    const comment = ruleComments[r.id] ? `\n   -> OBSERVAÇÃO DO ESPECIALISTA: "${ruleComments[r.id]}"` : "";
-    return `ALERTA: "${r.text}" (Critério: ${r.operator} ${r.value}) detectado em: ${r.matches.map(m => `${m.nome} (Nota: ${m.nota})`).join(', ')}.${comment}`;
-}).join('\n\n') : 'Nenhuma regra específica de alerta foi gatilhada.'}
+            const comment = ruleComments[r.id] ? `\n   -> OBSERVAÇÃO DO ESPECIALISTA: "${ruleComments[r.id]}"` : "";
+            return `ALERTA: "${r.text}" (Critério: ${r.operator} ${r.value}) detectado em: ${r.matches.map(m => `${m.nome} (Nota: ${m.nota})`).join(', ')}.${comment}`;
+        }).join('\n\n') : 'Nenhuma regra específica de alerta foi gatilhada.'}
 
 3. DADOS QUANTITATIVOS:
 TOP PONTOS FORTES:
@@ -869,8 +868,8 @@ GERE UM PLANO DE AÇÃO CONTENDO:
     const handleSaveNotes = async () => {
         if (!activeAss || !activeAss.id) return alert("Salve a avaliação primeiro.");
         setIsSaving(true);
-        await db.collection("radar_v3_respostas").doc(activeAss.id).set({ 
-            planoAcao: { generalNotes, keepDoing, improvements, ruleComments } 
+        await db.collection("radar_v3_respostas").doc(activeAss.id).set({
+            planoAcao: { generalNotes, keepDoing, improvements, ruleComments }
         }, { merge: true });
         setIsSaving(false);
         alert("Todas as anotações e análises foram salvas!");
@@ -902,17 +901,17 @@ GERE UM PLANO DE AÇÃO CONTENDO:
                         </div>
                         <textarea value={generalNotes} onChange={(e) => setGeneralNotes(e.target.value)} placeholder="Contexto..." className="w-full h-32 bg-transparent text-[10px] text-blue-100 p-3 outline-none resize-none" />
                     </div>
-                    
+
                     <div className="bg-slate-800/50 p-4 rounded-xl border border-blue-800 relative group focus-within:border-blue-500 transition-colors">
                         <div className="flex items-center gap-2 mb-3">
                             <i className="fas fa-microscope text-blue-400"></i>
                             <span className="text-[9px] font-bold uppercase tracking-widest text-blue-400">Aprofundamento em Regras Ativas ({triggeredRules.length})</span>
                         </div>
-                        
+
                         {triggeredRules.length > 0 ? (
                             <>
-                                <select 
-                                    value={selectedRuleId} 
+                                <select
+                                    value={selectedRuleId}
                                     onChange={(e) => setSelectedRuleId(e.target.value)}
                                     className="w-full bg-black/40 border border-blue-800 text-white text-[10px] p-2 rounded mb-2 outline-none focus:border-blue-500"
                                 >
@@ -929,7 +928,7 @@ GERE UM PLANO DE AÇÃO CONTENDO:
                                         <div className="text-[9px] text-blue-500/70 mb-1 ml-1">
                                             Análise sobre: <span className="text-white font-bold">"{currentRule.text}"</span>
                                         </div>
-                                        <textarea 
+                                        <textarea
                                             value={ruleComments[selectedRuleId] || ""}
                                             onChange={(e) => setRuleComments({ ...ruleComments, [selectedRuleId]: e.target.value })}
                                             className="w-full h-24 bg-black/20 rounded-lg text-[10px] text-blue-50 p-3 outline-none resize-none border border-transparent focus:border-blue-500/30 placeholder-blue-800/50"
@@ -957,7 +956,7 @@ GERE UM PLANO DE AÇÃO CONTENDO:
                     <div className="bg-[#1e293b] p-6 rounded-xl border border-slate-700 shadow-xl" id="rule-form-anchor">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-sm font-cinzel text-blue-100 flex items-center gap-2">
-                                <i className="fas fa-ruler-combined"></i> 
+                                <i className="fas fa-ruler-combined"></i>
                                 {editingId ? "Editando Regra" : "Minha Régua de Análise"}
                             </h3>
                             <div className="text-[9px] bg-blue-900/50 text-blue-300 px-2 py-1 rounded">Config Global</div>
@@ -967,32 +966,32 @@ GERE UM PLANO DE AÇÃO CONTENDO:
                             <div className="grid grid-cols-3 gap-2">
                                 <div className="col-span-2">
                                     <label className="text-[8px] font-bold text-slate-400 uppercase block mb-1">Alvo</label>
-                                    <select value={ruleForm.targetId} onChange={e => setRuleForm({...ruleForm, targetId: e.target.value})} className="w-full bg-slate-900 border border-slate-600 text-white text-[9px] p-2 rounded">
+                                    <select value={ruleForm.targetId} onChange={e => setRuleForm({ ...ruleForm, targetId: e.target.value })} className="w-full bg-slate-900 border border-slate-600 text-white text-[9px] p-2 rounded">
                                         <option value="GLOBAL">Aplicar à Média Geral</option>
                                         <optgroup label="Quesitos Específicos">
-                                            {flatQuestions.map(q => <option key={q.id} value={q.id}>[{q.eixo}] {q.texto.substring(0,40)}...</option>)}
+                                            {flatQuestions.map(q => <option key={q.id} value={q.id}>[{q.eixo}] {q.texto.substring(0, 40)}...</option>)}
                                         </optgroup>
                                     </select>
                                 </div>
                                 <div>
                                     <label className="text-[8px] font-bold text-slate-400 uppercase block mb-1">Condição</label>
                                     <div className="flex gap-1">
-                                        <select value={ruleForm.operator} onChange={e => setRuleForm({...ruleForm, operator: e.target.value})} className="bg-slate-900 border border-slate-600 text-white text-[9px] p-2 rounded w-1/2">
+                                        <select value={ruleForm.operator} onChange={e => setRuleForm({ ...ruleForm, operator: e.target.value })} className="bg-slate-900 border border-slate-600 text-white text-[9px] p-2 rounded w-1/2">
                                             <option value="<">&lt; Menor</option>
                                             <option value="<=">&le; Menor/Igual</option>
                                             <option value="==">= Igual</option>
                                             <option value=">">&gt; Maior</option>
                                             <option value=">=">&ge; Maior/Igual</option>
                                         </select>
-                                        <input type="number" step="0.1" min="0" max="5" value={ruleForm.value} onChange={e => setRuleForm({...ruleForm, value: e.target.value})} className="bg-slate-900 border border-slate-600 text-white text-[9px] p-2 rounded w-1/2" />
+                                        <input type="number" step="0.1" min="0" max="5" value={ruleForm.value} onChange={e => setRuleForm({ ...ruleForm, value: e.target.value })} className="bg-slate-900 border border-slate-600 text-white text-[9px] p-2 rounded w-1/2" />
                                     </div>
                                 </div>
                             </div>
                             <div>
                                 <label className="text-[8px] font-bold text-slate-400 uppercase block mb-1">Mensagem (Insight)</label>
-                                <input type="text" value={ruleForm.text} onChange={e => setRuleForm({...ruleForm, text: e.target.value})} placeholder="Ex: ALERTA: Processo Zumbi detectado..." className="w-full bg-slate-900 border border-slate-600 text-white text-[10px] p-2 rounded" />
+                                <input type="text" value={ruleForm.text} onChange={e => setRuleForm({ ...ruleForm, text: e.target.value })} placeholder="Ex: ALERTA: Processo Zumbi detectado..." className="w-full bg-slate-900 border border-slate-600 text-white text-[10px] p-2 rounded" />
                             </div>
-                            
+
                             <div className="flex gap-2">
                                 {editingId && (
                                     <button onClick={handleCancelEdit} className="w-1/3 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded text-[9px] font-bold uppercase transition-colors">Cancelar</button>
@@ -1030,7 +1029,7 @@ GERE UM PLANO DE AÇÃO CONTENDO:
                             })}
                         </div>
                     </div>
-                    
+
                     <div className="bg-slate-800/50 p-4 rounded-xl border border-blue-800">
                         <ExpandableList title="Pontos Fortes (>3)" count={analyzeData.strengths.length} items={analyzeData.strengths} colorClass="border-blue-500/30 text-blue-400" icon="fa-thumbs-up" />
                         <textarea value={keepDoing} onChange={(e) => setKeepDoing(e.target.value)} className="w-full h-20 bg-black/20 rounded-lg text-[10px] text-blue-50 p-3 mt-2 outline-none resize-none" placeholder="Ações para manter..." />
@@ -1057,7 +1056,7 @@ const MainApp = () => {
 
     React.useEffect(() => {
         const unsub = db.collection("radar_v3_config").doc("global").onSnapshot(d => {
-            if (d.exists) { 
+            if (d.exists) {
                 const data = d.data();
                 setModel(data.model || []);
                 setRoles(sanitizeRoles(data.roles));
@@ -1070,7 +1069,7 @@ const MainApp = () => {
         try {
             await db.collection("radar_v3_config").doc("global").set({ model, roles, dataModificacao: firebase.firestore.FieldValue.serverTimestamp() });
             alert("Estrutura guardada com sucesso!");
-        } catch(e) { alert("Erro ao guardar: " + e.message); }
+        } catch (e) { alert("Erro ao guardar: " + e.message); }
     };
 
     const handleSaveAnswers = async () => {
@@ -1085,26 +1084,26 @@ const MainApp = () => {
                     if (!aName) return;
                 }
             } else {
-                cName = prompt("Nome do Cliente:"); if(!cName) return;
-                aName = prompt("Nome da Avaliação:"); if(!aName) return;
+                cName = prompt("Nome do Cliente:"); if (!cName) return;
+                aName = prompt("Nome da Avaliação:"); if (!aName) return;
             }
-            
+
             const data = { clientName: cName, assessmentName: aName, respostas, dataAvaliacao: firebase.firestore.FieldValue.serverTimestamp() };
-            
+
             if (isUpdate && activeAss) {
                 await db.collection("radar_v3_respostas").doc(activeAss.id).update({ respostas, dataModificacao: firebase.firestore.FieldValue.serverTimestamp() });
                 alert("Avaliação Atualizada!");
             } else {
                 const doc = await db.collection("radar_v3_respostas").add(data);
-                await db.collection("radar_v3_clientes").doc(cName).set({createdAt: new Date()}, {merge:true});
+                await db.collection("radar_v3_clientes").doc(cName).set({ createdAt: new Date() }, { merge: true });
                 setActiveAss({ id: doc.id, clientName: cName, assessmentName: aName });
                 alert("Nova Avaliação/Melhoria Guardada!");
             }
-        } catch(e) { alert("Erro ao salvar: " + e.message); }
+        } catch (e) { alert("Erro ao salvar: " + e.message); }
     };
 
     const handleNew = () => {
-        if(confirm("Deseja limpar as respostas atuais para iniciar uma nova avaliação?")) {
+        if (confirm("Deseja limpar as respostas atuais para iniciar uma nova avaliação?")) {
             setRespostas({});
             setActiveAss(null);
         }
@@ -1112,7 +1111,7 @@ const MainApp = () => {
 
     return (
         <div className="min-h-screen flex flex-col bg-[#0f172a]">
-           <header className="bg-slate-900 p-4 border-b border-blue-900 sticky top-0 z-50 shadow-xl">
+            <header className="bg-slate-900 p-4 border-b border-blue-900 sticky top-0 z-50 shadow-xl">
                 <div className="max-w-6xl mx-auto flex justify-between items-center">
                     <div>
                         <h1 className="text-xl font-cinzel text-white tracking-widest leading-none">RADAR MATURIDADE</h1>
@@ -1135,37 +1134,37 @@ const MainApp = () => {
 
             <main className="flex-grow max-w-6xl mx-auto w-full p-4">
                 <div className="flex gap-6 mb-6 border-b border-blue-900/50">
-                    <button onClick={() => setTab('questionario')} className={`pb-2 text-[10px] font-black uppercase tracking-widest transition-all ${tab==='questionario' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-blue-900 opacity-40 hover:opacity-100'}`}>Questionário</button>
-                    <button onClick={() => setTab('radar')} className={`pb-2 text-[10px] font-black uppercase tracking-widest transition-all ${tab==='radar' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-blue-900 opacity-40 hover:opacity-100'}`}>Resultados</button>
-                    <button onClick={() => setTab('plano_acao')} className={`pb-2 text-[10px] font-black uppercase tracking-widest transition-all ${tab==='plano_acao' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-blue-900 opacity-40 hover:opacity-100'}`}>Planos de Ação</button>
+                    <button onClick={() => setTab('questionario')} className={`pb-2 text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'questionario' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-blue-900 opacity-40 hover:opacity-100'}`}>Questionário</button>
+                    <button onClick={() => setTab('radar')} className={`pb-2 text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'radar' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-blue-900 opacity-40 hover:opacity-100'}`}>Resultados</button>
+                    <button onClick={() => setTab('plano_acao')} className={`pb-2 text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'plano_acao' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-blue-900 opacity-40 hover:opacity-100'}`}>Planos de Ação</button>
                 </div>
 
                 {tab === 'questionario' ? (
-                    <QuestionnaireTab 
-                        model={model} setModel={setModel} 
-                        roles={roles} setRoles={setRoles} 
-                        respostas={respostas} setRespostas={setRespostas} 
-                        handleSaveSettings={handleSaveSettings} 
+                    <QuestionnaireTab
+                        model={model} setModel={setModel}
+                        roles={roles} setRoles={setRoles}
+                        respostas={respostas} setRespostas={setRespostas}
+                        handleSaveSettings={handleSaveSettings}
                     />
                 ) : tab === 'radar' ? (
                     <RadarTab model={model} roles={roles} respostas={respostas} activeInfo={activeAss} />
                 ) : (
                     <ActionPlanTab model={model} respostas={respostas} activeAss={activeAss} />
-                )} 
+                )}
             </main>
 
             <footer className="py-8 text-center text-slate-700 text-[9px] font-black tracking-[1em] uppercase opacity-40">
-                    Agilidade e desenvolvimento humano não são destinos, mas jornadas contínuas. Este radar é um guia para sua evolução constante.
+                Agilidade e desenvolvimento humano não são destinos, mas jornadas contínuas. Este radar é um guia para sua evolução constante.
             </footer>
-            <ImportModal 
-                isOpen={isImport} 
-                onClose={() => setIsImport(false)} 
-               onSelect={(a) => {setRespostas(a.respostas||{}); setActiveAss(a); setIsImport(false);}} 
+            <ImportModal
+                isOpen={isImport}
+                onClose={() => setIsImport(false)}
+                onSelect={(a) => { setRespostas(a.respostas || {}); setActiveAss(a); setIsImport(false); }}
             />
-            <HelpModal 
-                isOpen={helpOpen} 
-                onClose={() => setHelpOpen(false)} 
-                currentTab={tab} 
+            <HelpModal
+                isOpen={helpOpen}
+                onClose={() => setHelpOpen(false)}
+                currentTab={tab}
             />
         </div>
     );
