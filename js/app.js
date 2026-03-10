@@ -267,16 +267,36 @@ const RadarTab = ({ model, roles, respostas, activeInfo }) => {
     });
 
     const activeRoles = roles.filter(r => !r.hidden);
+    
+    // 1. Verifica o que o usuário clicou
+    const rolesToShow = filter.type === 'role' 
+        ? activeRoles.filter(r => r.nome === filter.id) 
+        : activeRoles;
+
     const roleChartData = {
         labels: model.filter(e => !e.hidden).map(e => e.nome),
-        datasets: activeRoles.map((role, idx) => {
-            const color = `hsla(${210 + (idx * 30)}, 70%, 50%, 0.4)`; // Base blue palette variations
-            const border = `hsla(${210 + (idx * 30)}, 70%, 50%, 1)`;
+        
+        // 2. Usamos o rolesToShow em vez de activeRoles
+        datasets: rolesToShow.map((role) => {
+            
+            // 3. UX: Manter a cor exata do botão no gráfico!
+            // Para isso, buscamos a posição original do papel na lista completa
+            const originalIdx = activeRoles.findIndex(r => r.id === role.id);
+            const idxToUse = originalIdx > -1 ? originalIdx : 0;
+            
+            const color = `hsla(${210 + (idxToUse * 30)}, 70%, 50%, 0.4)`;
+            const border = `hsla(${210 + (idxToUse * 30)}, 70%, 50%, 1)`;
+            
             return {
-                label: role.nome, backgroundColor: color, borderColor: border, borderWidth: 1,
+                label: role.nome, 
+                backgroundColor: color, 
+                borderColor: border, 
+                borderWidth: 1,
                 data: model.filter(e => !e.hidden).map(axis => {
                     const roleQs = [];
-                    axis.subgrupos.forEach(s => s.perguntas.forEach(p => { if (!p.hidden && p.papel === role.nome) roleQs.push(p); }));
+                    axis.subgrupos.forEach(s => s.perguntas.forEach(p => { 
+                        if (!p.hidden && p.papel === role.nome) roleQs.push(p); 
+                    }));
                     return calcScore(respostas, roleQs);
                 })
             };
