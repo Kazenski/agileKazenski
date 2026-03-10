@@ -58,71 +58,123 @@ const ImportModal = ({ isOpen, onClose, onSelect }) => {
 };
 
 // --- MODAL DE AJUDA (TUTORIAL) ---
-const HelpModal = ({ isOpen, onClose }) => {
+// --- MODAL DE AJUDA (TUTORIAL CONTEXTUAL) ---
+const HelpModal = ({ isOpen, onClose, currentTab }) => {
     if (!isOpen) return null;
-    
+
+    // Dicionário para títulos dinâmicos
+    const tabNames = {
+        'questionario': '1. Estrutura & Questionário',
+        'radar': '2. Resultados & Métricas',
+        'plano_acao': '3. Planos de Ação & IA'
+    };
+
     return (
         <div className="fixed inset-0 z-[120] flex items-start justify-center p-4 pt-10 bg-black/90 backdrop-blur-sm animate-fade">
             <div className="bg-slate-900 w-full max-w-3xl rounded-xl border border-blue-500 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                <div className="bg-slate-800 p-4 border-b border-blue-700 flex justify-between items-center">
-                    <h2 className="text-lg font-cinzel text-white flex items-center gap-2">
-                        <i className="fas fa-book-open text-blue-400"></i> Manual do Facilitador
-                    </h2>
-                    <button onClick={onClose} className="text-blue-300 hover:text-white transition-colors">
+                
+                {/* Header do Modal */}
+                <div className="bg-slate-800 p-4 border-b border-blue-700 flex justify-between items-center shrink-0">
+                    <div>
+                        <h2 className="text-lg font-cinzel text-white flex items-center gap-2">
+                            <i className="fas fa-book-open text-blue-400"></i> Manual do Facilitador
+                        </h2>
+                        <div className="text-[10px] text-blue-300 mt-1 uppercase tracking-widest font-bold">
+                            Lendo documentação da aba: <span className="text-amber-400">{tabNames[currentTab]}</span>
+                        </div>
+                    </div>
+                    <button onClick={onClose} className="text-blue-300 hover:text-white transition-colors h-full px-2">
                         <i className="fas fa-times text-xl"></i>
                     </button>
                 </div>
                 
-                <div className="p-6 overflow-y-auto custom-scroll space-y-8 text-blue-100/90 text-[11px] leading-relaxed">
-                    <section>
-                        <h3 className="text-blue-400 font-bold uppercase text-xs tracking-widest mb-3 border-b border-blue-800 pb-1">
-                            <i className="fas fa-list-check mr-2"></i>1. Estrutura & Questionário
-                        </h3>
-                        <div className="space-y-2">
-                            <p><strong className="text-white">Base do Radar:</strong> Os Eixos, Subgrupos e <span className="text-amber-400 font-bold">Quesitos</span> definidos alimentam todas as métricas.</p>
-                            <ul className="list-disc pl-5 space-y-1 text-blue-200/80">
-                                <li><strong>Edição e Ordem:</strong> Clique em <span className="bg-amber-600 text-white px-1 rounded text-[9px]">EDITAR ESTRUTURA</span>. Use as setas para reordenar.</li>
-                                <li><strong>Histórico e Reedição:</strong> Use o botão "Importar" para carregar avaliações anteriores.</li>
-                            </ul>
-                        </div>
-                    </section>
-
-                    <section>
-                        <h3 className="text-blue-400 font-bold uppercase text-xs tracking-widest mb-3 border-b border-blue-800 pb-1">
-                            <i className="fas fa-chart-pie mr-2"></i>2. Leitura de Métricas
-                        </h3>
-                        <p className="mb-2">Os gráficos são interativos e reagem aos seus cliques para aprofundar a análise:</p>
-                        <ul className="list-disc pl-5 space-y-1 text-blue-200/80">
-                            <li><strong>Filtro por Eixo:</strong> Ao clicar em um gráfico de Eixo, o sistema foca apenas naquele tema.</li>
-                            <li><strong>Filtro por Papel:</strong> Ao selecionar um papel, todos os dados são filtrados.</li>
-                            <li><strong>Comparador Histórico:</strong> Permite comparar a avaliação atual com até 2 momentos passados.</li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h3 className="text-blue-400 font-bold uppercase text-xs tracking-widest mb-3 border-b border-blue-800 pb-1">
-                            <i className="fas fa-clipboard-list mr-2"></i>3. Planos de Ação & Inteligência
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h4 className="font-bold text-white mb-1">Inputs e Dropdowns</h4>
-                                <ul className="space-y-2">
-                                    <li><strong className="text-blue-300">Contexto do Líder:</strong> Registre o cenário atual.</li>
-                                    <li><strong className="text-blue-300">Dropdown de Regras Ativas:</strong> Comente especificamente os alertas gatilhados.</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 className="font-bold text-white mb-1">Quesitos Especiais</h4>
-                                <ul className="list-disc pl-4 space-y-1 text-blue-200/80">
-                                    <li><strong>Alvo:</strong> Defina média ou quesito específico.</li>
-                                    <li><strong>Condição:</strong> Ex: &lt; 2.5</li>
-                                    <li><strong>Mensagem:</strong> Texto de alerta do prompt.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </section>
+                {/* Conteúdo Dinâmico por Aba */}
+                <div className="p-6 overflow-y-auto custom-scroll space-y-6 text-blue-100/90 text-[11px] leading-relaxed">
                     
-                    <div className="bg-blue-900/40 p-3 rounded border border-blue-800 text-center italic text-blue-400">
+                    {/* CONTEÚDO DA ABA 1: QUESTIONÁRIO */}
+                    {currentTab === 'questionario' && (
+                        <div className="space-y-6 animate-fade">
+                            <section>
+                                <h3 className="text-blue-400 font-bold uppercase text-xs tracking-widest mb-3 border-b border-blue-800 pb-1">
+                                    <i className="fas fa-list-check mr-2"></i>Guia Prático
+                                </h3>
+                                <ul className="list-disc pl-5 space-y-2 text-blue-200/80">
+                                    <li><strong>Edição e Ordem:</strong> Clique em <span className="bg-amber-600 text-white px-1 rounded text-[9px]">EDITAR ESTRUTURA</span>. Use as setas para reordenar.</li>
+                                    <li><strong>Olho de Visibilidade:</strong> Oculta um eixo ou pergunta sem apagá-lo do banco de dados, preservando o histórico de clientes antigos.</li>
+                                    <li><strong>Histórico e Reedição:</strong> Use o botão "Importar" no topo para carregar avaliações anteriores e continuar de onde parou.</li>
+                                </ul>
+                            </section>
+
+                            <section className="bg-slate-800/50 p-4 rounded-xl border border-blue-900/50">
+                                <h3 className="text-blue-500 font-bold uppercase text-[10px] tracking-widest mb-2 flex items-center gap-2">
+                                    <i className="fas fa-cogs"></i> Funcionamento Técnico (Under the Hood)
+                                </h3>
+                                <div className="space-y-3 text-[10px]">
+                                    <p><strong>Motor de Respostas:</strong> A escala avaliativa mapeia chaves inteiras (1 a 5) em labels de maturidade ("Não", "Raro", "Cult", etc). O valor 0 (Zero) é lido tecnicamente como N/A e é <strong>ignorado no cálculo das médias</strong>.</p>
+                                    <p><strong>Vinculação de Papéis:</strong> No modo de edição, o select ao lado de cada pergunta amarra aquele quesito a um "Papel" específico. É este vínculo que permite ao gráfico "Comparativo de Papéis" desenhar as linhas separadas mais tarde.</p>
+                                    <p><strong>Geração de IDs Dinâmicos:</strong> Cada eixo, subgrupo, pergunta e papel gerado via interface cria um ID hash alfanumérico único. Isso garante que, se você mudar o "Nome" de uma pergunta, os dados antigos não quebram.</p>
+                                    <p><strong>Fluxo de Salvamento:</strong> Ao clicar no botão azul de Salvar, o sistema guarda todo o objeto JSON global (Eixos, Subgrupos, Papéis) dentro do documento <code>config/global</code> no Firestore. As notas dadas ao cliente são salvas em uma coleção separada <code>radar_v3_respostas</code> vinculada ao nome dele.</p>
+                                </div>
+                            </section>
+                        </div>
+                    )}
+
+                    {/* CONTEÚDO DA ABA 2: RESULTADOS (RADAR) */}
+                    {currentTab === 'radar' && (
+                        <div className="space-y-6 animate-fade">
+                            <section>
+                                <h3 className="text-blue-400 font-bold uppercase text-xs tracking-widest mb-3 border-b border-blue-800 pb-1">
+                                    <i className="fas fa-chart-pie mr-2"></i>Guia Prático
+                                </h3>
+                                <ul className="list-disc pl-5 space-y-2 text-blue-200/80">
+                                    <li><strong>Filtro por Eixo:</strong> Ao clicar em um gráfico de Eixo (topo), o sistema foca o <em>Comparador</em> apenas naquele tema.</li>
+                                    <li><strong>Filtro por Papel:</strong> Ao selecionar um papel na lateral direita, o Gráfico 2 limpa os outros papéis e foca apenas no selecionado.</li>
+                                    <li><strong>Comparador Histórico:</strong> Os 3 slots inferiores permitem comparar. O primeiro slot (Atual) já vem preenchido. Clique nos slots vazios (+) para puxar avaliações passadas do mesmo cliente.</li>
+                                </ul>
+                            </section>
+
+                            <section className="bg-slate-800/50 p-4 rounded-xl border border-blue-900/50">
+                                <h3 className="text-blue-500 font-bold uppercase text-[10px] tracking-widest mb-2 flex items-center gap-2">
+                                    <i className="fas fa-cogs"></i> Funcionamento Técnico (Under the Hood)
+                                </h3>
+                                <div className="space-y-3 text-[10px]">
+                                    <p><strong>Cálculo de Médias (calcScore):</strong> A função matemática por trás dos gráficos soma todas as notas maiores que zero e divide apenas pela quantidade de itens respondidos. Se um eixo tem 10 perguntas e apenas 5 foram respondidas, o divisor será 5. Isso evita penalizar a média com itens "N/A".</p>
+                                    <p><strong>Isolamento de Filtros (UX):</strong> Existe uma regra de independência. Se o filtro global for do tipo "Eixo", o gráfico "Comparativo de Papéis" ignora esse filtro e desenha o panorama completo. Se o usuário clica em um botão de "Papel", o filtro age exclusivamente neste gráfico, mantendo a estabilidade visual.</p>
+                                    <p><strong>Explorador de Respostas:</strong> O controle deslizante (Slider) não altera o banco de dados. Ele realiza uma varredura real-time no array flat do modelo ativo e exibe exatamente quais perguntas receberam a pontuação do slider (Ex: Mostra exatamente o que tirou 3).</p>
+                                </div>
+                            </section>
+                        </div>
+                    )}
+
+                    {/* CONTEÚDO DA ABA 3: PLANOS DE AÇÃO */}
+                    {currentTab === 'plano_acao' && (
+                        <div className="space-y-6 animate-fade">
+                            <section>
+                                <h3 className="text-blue-400 font-bold uppercase text-xs tracking-widest mb-3 border-b border-blue-800 pb-1">
+                                    <i className="fas fa-clipboard-list mr-2"></i>Guia Prático
+                                </h3>
+                                <ul className="list-disc pl-5 space-y-2 text-blue-200/80">
+                                    <li><strong>Contexto do Líder:</strong> Use este campo para escrever percepções humanas que os gráficos não mostram (comportamentos, medos, cultura).</li>
+                                    <li><strong>Aprofundamento de Regras:</strong> Se alguma regra técnica foi violada (aparece na lista), selecione ela e adicione seu comentário de especialista.</li>
+                                    <li><strong>Criar Regras:</strong> No painel direito, cadastre alertas como: "Se o quesito DevOps for &lt; 2, emitir alerta X". O sistema avaliará isso em todos os clientes automaticamente a partir de agora.</li>
+                                    <li><strong>Gerar Prompt (Botão Roxo):</strong> Clica aqui, vai no ChatGPT/Gemini e cola. Ele fará uma análise sênior baseada no seu contexto.</li>
+                                </ul>
+                            </section>
+
+                            <section className="bg-slate-800/50 p-4 rounded-xl border border-blue-900/50">
+                                <h3 className="text-blue-500 font-bold uppercase text-[10px] tracking-widest mb-2 flex items-center gap-2">
+                                    <i className="fas fa-cogs"></i> Funcionamento Técnico (Under the Hood)
+                                </h3>
+                                <div className="space-y-3 text-[10px]">
+                                    <p><strong>Trigger Automático de Regras:</strong> A constante <code>triggeredRules</code> itera sobre todas as regras cadastradas (que são salvas na config global do Firestore). Se a regra aponta para "MÉDIA GERAL", ele cruza o operador (`<, >, ==, etc`) contra o cálculo de média de todo o radar. Se aponta para uma pergunta, avalia pontualmente. Apenas regras que retornam <em>TRUE</em> aparecem no dropdown de contexto.</p>
+                                    <p><strong>Cálculo Rápido de Oportunidades (Listas Expansíveis):</strong> O sistema classifica perguntas em duas matrizes dinâmicas. Tudo que pontuou maior que 3 (4 e 5) cai em "Pontos Fortes". Tudo que pontuou menor ou igual a 3 (mas maior que 0) cai como "Oportunidades".</p>
+                                    <p><strong>Montagem do Prompt da IA:</strong> O botão roxo concatena variáveis dinamicamente. Ele injeta o texto livre do líder, o Array mapeado das regras engatilhadas + os comentários salvos sobre elas, e os top 15 itens mais fracos ou fortes para formar um bloco de contexto perfeito para LLMs.</p>
+                                </div>
+                            </section>
+                        </div>
+                    )}
+                    
+                    <div className="bg-blue-900/40 p-3 rounded border border-blue-800 text-center italic text-blue-400 mt-4">
                         "O objetivo não é apenas medir, mas gerar conversas de valor e planos acionáveis."
                     </div>
                 </div>
@@ -1102,14 +1154,19 @@ const MainApp = () => {
                 )} 
             </main>
 
-            <footer className="py-8 text-center text-slate-700 text-[9px] font-black tracking-[1em] uppercase opacity-40">Enterprise Agile Governance Architecture</footer>
-
+            <footer className="py-8 text-center text-slate-700 text-[9px] font-black tracking-[1em] uppercase opacity-40">
+                    Agilidade e desenvolvimento humano não são destinos, mas jornadas contínuas. Este radar é um guia para sua evolução constante.
+            </footer>
             <ImportModal 
                 isOpen={isImport} 
                 onClose={() => setIsImport(false)} 
                onSelect={(a) => {setRespostas(a.respostas||{}); setActiveAss(a); setIsImport(false);}} 
             />
-            <HelpModal isOpen={helpOpen} onClose={() => setHelpOpen(false)} />
+            <HelpModal 
+                isOpen={helpOpen} 
+                onClose={() => setHelpOpen(false)} 
+                currentTab={tab} 
+            />
         </div>
     );
 };
