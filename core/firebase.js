@@ -8,9 +8,9 @@ const firebaseConfig = {
     appId: "1:111700352869:web:39f591d5a9f83188218b8c"
 };
 
-// Garante que o firebase só inicialize uma vez
+// 1. Inicializa o App com segurança
 const app = !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
-// Inicializa os serviços
-const db = firebase.firestore(app);
-const functions = firebase.functions(app);
+// 2. Atrela os serviços EXATAMENTE a este app (evita o erro do DEFAULT)
+const db = app.firestore();
+const cloudFunctions = app.functions();
