@@ -871,7 +871,7 @@ GERE UM PLANO DE AÇÃO CONTENDO:
 
         try {
             // Chama a função do Firebase no backend
-            const gerarAnaliseRadar = firebase.functions().httpsCallable('gerarAnaliseRadar');
+            const gerarAnaliseRadar = functions.httpsCallable('gerarAnaliseRadar');
             const result = await gerarAnaliseRadar({ prompt: prompt });
             setIaResponse(result.data.response);
         } catch (error) {
