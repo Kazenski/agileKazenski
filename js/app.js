@@ -727,16 +727,20 @@ const ActionPlanTab = ({ model, respostas, activeAss }) => {
     const [isSaving, setIsSaving] = React.useState(false);
     const [customRules, setCustomRules] = React.useState([]);
 
+    const [iaResponse, setIaResponse] = React.useState("");
+    const [isGeneratingIA, setIsGeneratingIA] = React.useState(false);
+    
     const DEFAULT_RULE = { targetId: "GLOBAL", operator: "<", value: 3, text: "" };
     const [ruleForm, setRuleForm] = React.useState(DEFAULT_RULE);
     const [editingId, setEditingId] = React.useState(null);
-
+    
     React.useEffect(() => {
         if (activeAss && activeAss.planoAcao) {
             setGeneralNotes(activeAss.planoAcao.generalNotes || "");
             setKeepDoing(activeAss.planoAcao.keepDoing || "");
             setImprovements(activeAss.planoAcao.improvements || "");
             setRuleComments(activeAss.planoAcao.ruleComments || {});
+            setIaResponse(activeAss.planoAcao.iaResponse || ""); // Adicionado aqui
         }
     }, [activeAss]);
 
@@ -836,7 +840,7 @@ const ActionPlanTab = ({ model, respostas, activeAss }) => {
 
     const currentRule = triggeredRules.find(r => r.id === selectedRuleId);
 
-    const copyPrompt = () => {
+    const handleGenerateIA = async () => {
         const prompt = `
 ATUE COMO UM AGILE COACH SÊNIOR.
 Analise os dados do cliente "${activeAss?.clientName || 'Cliente'}".
@@ -845,9 +849,9 @@ Analise os dados do cliente "${activeAss?.clientName || 'Cliente'}".
 
 2. ANÁLISE AUTOMÁTICA & OBSERVAÇÕES ESPECÍFICAS:
 ${triggeredRules.length > 0 ? triggeredRules.map(r => {
-            const comment = ruleComments[r.id] ? `\n   -> OBSERVAÇÃO DO ESPECIALISTA: "${ruleComments[r.id]}"` : "";
-            return `ALERTA: "${r.text}" (Critério: ${r.operator} ${r.value}) detectado em: ${r.matches.map(m => `${m.nome} (Nota: ${m.nota})`).join(', ')}.${comment}`;
-        }).join('\n\n') : 'Nenhuma regra específica de alerta foi gatilhada.'}
+    const comment = ruleComments[r.id] ? `\n   -> OBSERVAÇÃO DO ESPECIALISTA: "${ruleComments[r.id]}"` : "";
+    return `ALERTA: "${r.text}" (Critério: ${r.operator} ${r.value}) detectado em: ${r.matches.map(m => `${m.nome} (Nota: ${m.nota})`).join(', ')}.${comment}`;
+}).join('\n\n') : 'Nenhuma regra específica de alerta foi gatilhada.'}
 
 3. DADOS QUANTITATIVOS:
 TOP PONTOS FORTES:
@@ -858,18 +862,31 @@ ${analyzeData.weaknesses.slice(0, 15).map(i => `- ${i.texto} (${i.nota})`).join(
 
 GERE UM PLANO DE AÇÃO CONTENDO:
 - Sumário Executivo.
-- Ações para os Alertas do Especialista (Prioridade Máxima), considerando as observações manuais.
+- Ações para os Alertas do Especialista (Prioridade Máxima).
 - Quick Wins baseados nas oportunidades.
 `.trim();
-        navigator.clipboard.writeText(prompt);
-        alert("Prompt copiado!");
+
+        setIsGeneratingIA(true);
+        setIaResponse("");
+
+        try {
+            // Chama a função do Firebase no backend
+            const gerarAnaliseRadar = firebase.functions().httpsCallable('gerarAnaliseRadar');
+            const result = await gerarAnaliseRadar({ prompt: prompt });
+            setIaResponse(result.data.response);
+        } catch (error) {
+            console.error("Erro na IA:", error);
+            alert("Falha de conexão com a IA. Motivo: " + error.message);
+        } finally {
+            setIsGeneratingIA(false);
+        }
     };
 
     const handleSaveNotes = async () => {
         if (!activeAss || !activeAss.id) return alert("Salve a avaliação primeiro.");
         setIsSaving(true);
-        await db.collection("radar_v3_respostas").doc(activeAss.id).set({
-            planoAcao: { generalNotes, keepDoing, improvements, ruleComments }
+        await db.collection("radar_v3_respostas").doc(activeAss.id).set({ 
+            planoAcao: { generalNotes, keepDoing, improvements, ruleComments, iaResponse } 
         }, { merge: true });
         setIsSaving(false);
         alert("Todas as anotações e análises foram salvas!");
@@ -877,20 +894,38 @@ GERE UM PLANO DE AÇÃO CONTENDO:
 
     return (
         <div className="animate-fade pb-20 space-y-8">
-            <div className="bg-blue-900/20 p-6 rounded-xl border border-blue-800 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div>
-                    <h2 className="text-xl font-cinzel text-white">Plano de Ação & Insights</h2>
-                    <p className="text-[10px] text-blue-400">Estruture os próximos passos com apoio de dados e IA.</p>
-                </div>
-                <button onClick={copyPrompt} className="bg-gradient-to-r from-purple-800 to-indigo-900 border border-purple-500/50 hover:border-purple-300 text-white px-6 py-3 rounded-xl shadow-xl transition-all">
-                    <div className="flex items-center gap-3">
-                        <i className="fas fa-magic text-xl animate-pulse"></i>
-                        <div className="text-left">
-                            <div className="text-[8px] font-bold uppercase tracking-widest text-purple-300">Inteligência Artificial</div>
-                            <div className="text-xs font-bold">Gerar Prompt Analítico</div>
-                        </div>
+            <div className="bg-blue-900/20 p-6 rounded-xl border border-blue-800 flex flex-col items-start gap-4">
+                <div className="w-full flex justify-between items-center mb-2">
+                    <div>
+                        <h2 className="text-xl font-cinzel text-white">Plano de Ação & Insights</h2>
+                        <p className="text-[10px] text-blue-400">Estruture os próximos passos com apoio de dados e IA.</p>
                     </div>
-                </button>
+                    <button 
+                        onClick={handleGenerateIA} 
+                        disabled={isGeneratingIA}
+                        className={`px-6 py-3 rounded-xl shadow-xl transition-all font-bold text-xs uppercase flex items-center gap-3
+                            ${isGeneratingIA ? 'bg-slate-700 text-slate-400 cursor-not-allowed border border-slate-600' : 'bg-gradient-to-r from-purple-800 to-indigo-900 border border-purple-500/50 hover:border-purple-300 text-white'}`}
+                    >
+                        {isGeneratingIA ? <i className="fas fa-spinner fa-spin text-xl"></i> : <i className="fas fa-magic text-xl animate-pulse text-purple-300"></i>}
+                        <div className="text-left">
+                            <div className="text-[8px] tracking-widest opacity-80">{isGeneratingIA ? 'PROCESSANDO...' : 'Inteligência Artificial'}</div>
+                            <div>{isGeneratingIA ? 'Analisando Dados' : 'Gerar Insight'}</div>
+                        </div>
+                    </button>
+                </div>
+
+                {/* Caixa de Texto que recebe a resposta do Gemini */}
+                {(iaResponse || isGeneratingIA) && (
+                    <div className="w-full animate-fade">
+                        <textarea 
+                            value={isGeneratingIA ? "O Gemini está analisando o contexto e os dados técnicos para redigir o plano de ação..." : iaResponse}
+                            onChange={(e) => setIaResponse(e.target.value)}
+                            disabled={isGeneratingIA}
+                            className={`w-full bg-slate-900 border text-[11px] p-4 rounded-xl outline-none resize-y min-h-[300px] leading-relaxed custom-scroll
+                                ${isGeneratingIA ? 'border-purple-500/30 text-purple-300 italic animate-pulse' : 'border-purple-500/80 text-white focus:border-purple-400'}`}
+                        />
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
