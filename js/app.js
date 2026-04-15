@@ -1044,6 +1044,76 @@ GERE UM PLANO DE AÇÃO CONTENDO:
     );
 };
 
+// --- ABA CONFIGURAÇÕES ---
+const ConfigTab = ({ model }) => {
+
+    const handleExportTxt = () => {
+        let content = "RADAR DE MATURIDADE ÁGIL - REVISÃO DE ESTRUTURA\n";
+        content += "Gerado em: " + new Date().toLocaleString() + "\n";
+        content += "========================================================\n\n";
+
+        model.forEach((eixo, i) => {
+            if (eixo.hidden) content += `[OCULTO] `;
+            content += `EIXO ${i + 1}: ${eixo.nome.toUpperCase()}\n`;
+            content += `--------------------------------------------------------\n\n`;
+
+            eixo.subgrupos.forEach((sub, j) => {
+                if (sub.hidden) content += `  [OCULTO] `;
+                content += `  Subgrupo: ${sub.nome}\n`;
+                content += `  ..................................................\n`;
+
+                sub.perguntas.forEach((perg) => {
+                    let prefix = perg.hidden ? "    [OCULTO] " : "    - ";
+                    content += `${prefix}[Papel: ${perg.papel}] ${perg.texto}\n`;
+                });
+                content += `\n`;
+            });
+            content += `\n`;
+        });
+
+        // Criação dinâmica do arquivo no navegador
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `radar_estrutura_${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
+    return (
+        <div className="animate-fade pb-20 space-y-8">
+            <div className="bg-blue-900/20 p-6 rounded-xl border border-blue-800 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h2 className="text-xl font-cinzel text-white">Configurações Gerais</h2>
+                    <p className="text-[10px] text-blue-400">Gerenciamento de dados e administração do sistema.</p>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Card de Exportação TXT */}
+                <div className="bg-slate-800/50 p-6 rounded-xl border border-blue-800 space-y-4 shadow-xl">
+                    <h3 className="text-sm font-bold text-blue-400 uppercase tracking-widest border-b border-blue-900 pb-2 flex items-center">
+                        <i className="fas fa-file-export mr-2 text-lg"></i> Exportação de Dados
+                    </h3>
+                    <p className="text-[10px] text-blue-100/70 leading-relaxed">
+                        Faça o download de todos os eixos, subgrupos e perguntas em formato de texto simples (.txt).
+                        Esta funcionalidade é ideal para enviar a estrutura atual para revisão assíncrona com o time de especialistas ou stakeholders.
+                    </p>
+                    <button
+                        onClick={handleExportTxt}
+                        className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-lg text-[10px] font-bold uppercase shadow-lg tracking-widest flex justify-center items-center gap-2 transition-all mt-4"
+                    >
+                        <i className="fas fa-download"></i> Baixar Estrutura Completa (TXT)
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 // --- COMPONENTE PRINCIPAL ---
 const MainApp = () => {
     const [tab, setTab] = React.useState('questionario');
@@ -1137,6 +1207,7 @@ const MainApp = () => {
                     <button onClick={() => setTab('questionario')} className={`pb-2 text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'questionario' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-blue-900 opacity-40 hover:opacity-100'}`}>Questionário</button>
                     <button onClick={() => setTab('radar')} className={`pb-2 text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'radar' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-blue-900 opacity-40 hover:opacity-100'}`}>Resultados</button>
                     <button onClick={() => setTab('plano_acao')} className={`pb-2 text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'plano_acao' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-blue-900 opacity-40 hover:opacity-100'}`}>Planos de Ação</button>
+                    <button onClick={() => setTab('configuracoes')} className={`pb-2 text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'configuracoes' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-blue-900 opacity-40 hover:opacity-100'}`}>Configurações</button>
                 </div>
 
                 {tab === 'questionario' ? (
@@ -1148,8 +1219,10 @@ const MainApp = () => {
                     />
                 ) : tab === 'radar' ? (
                     <RadarTab model={model} roles={roles} respostas={respostas} activeInfo={activeAss} />
-                ) : (
+                ) : tab === 'plano_acao' ? (
                     <ActionPlanTab model={model} respostas={respostas} activeAss={activeAss} />
+                ) : (
+                    <ConfigTab model={model} />
                 )}
             </main>
 
