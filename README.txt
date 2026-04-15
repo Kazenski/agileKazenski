@@ -2,7 +2,7 @@
 
 O **Radar de Maturidade Ágil** é uma aplicação web interativa projetada para Agile Coaches, Scrum Masters e facilitadores. Ele permite avaliar, visualizar e acompanhar a maturidade ágil de equipes e clientes ao longo do tempo, combinando gráficos dinâmicos com análise de dados auxiliada por Inteligência Artificial.
 
-## Funcionalidades Principais
+## 🚀 Funcionalidades Principais
 
 O sistema é dividido em três módulos principais:
 
@@ -30,7 +30,7 @@ Este projeto foi construído focado em agilidade e não requer *build* complexo,
 * **Banco de Dados / Cloud:** Firebase Firestore (Compat 9.22) para persistência em tempo real das configurações e avaliações dos clientes.
 * **Ícones & Fontes:** FontAwesome 6.5.2, Google Fonts (Inter e Cinzel).
 
-## Estrutura do Projeto
+## 🗂️ Estrutura do Projeto
 
 Abaixo está o detalhamento de como as pastas e arquivos estão organizados para garantir a separação de responsabilidades:
 
@@ -45,24 +45,27 @@ Abaixo está o detalhamento de como as pastas e arquivos estão organizados para
 │
 └── /js
     └── app.js          # Coração do projeto. Contém todos os componentes React, incluindo Modais (Importação, Ajuda), wrapper do Chart.js e as lógicas de negócio das abas do painel.
+```
 
+## ☁️ Configuração de Banco de Dados
 
-## Configuração de Banco de Dados
-Para uso individual ou em novos ambientes, atualize o arquivo core/firebase.js com as suas próprias credenciais geradas pelo console do Firebase:
+Para uso individual ou em novos ambientes, atualize o arquivo `core/firebase.js` com as suas próprias credenciais geradas pelo console do Firebase:
 
-
+```javascript
 const firebaseConfig = {
-apiKey: "SUA_API_KEY",
-authDomain: "seu-projeto.firebaseapp.com",
-projectId: "seu-projeto",
-storageBucket: "seu-projeto.appspot.com",
-messagingSenderId: "SEU_SENDER_ID",
-appId: "SEU_APP_ID"
+    apiKey: "SUA_API_KEY",
+    authDomain: "seu-projeto.firebaseapp.com",
+    projectId: "seu-projeto",
+    storageBucket: "seu-projeto.appspot.com",
+    messagingSenderId: "SEU_SENDER_ID",
+    appId: "SEU_APP_ID"
 };
+```
 
+### Coleções no Firestore
 
-## O sistema utiliza as seguintes coleções principais no Firestore:
+O sistema utiliza as seguintes coleções principais no Firestore:
 
-- radar_v3_config: Guarda a estrutura global de perguntas e regras de IA.
-- radar_v3_respostas: Armazena todas as submissões de avaliações dos clientes.
-- radar_v3_clientes: Índices dos clientes para fácil importação e busca.
+* **`radar_v3_config`**: Guarda a estrutura global de perguntas e regras de IA.
+* **`radar_v3_respostas`**: Armazena todas as submissões de avaliações dos clientes.
+* **`radar_v3_clientes`**: Índices dos clientes para fácil importação e busca.
