@@ -2,7 +2,7 @@
 
 O **Radar de Maturidade Ágil** é uma aplicação web interativa projetada para Agile Coaches, Scrum Masters e facilitadores. Ele permite avaliar, visualizar e acompanhar a maturidade ágil de equipes e clientes ao longo do tempo, combinando gráficos dinâmicos com análise de dados auxiliada por Inteligência Artificial.
 
-## 🚀 Funcionalidades Principais
+## Funcionalidades Principais
 
 O sistema é dividido em três módulos principais:
 
@@ -30,7 +30,7 @@ Este projeto foi construído focado em agilidade e não requer *build* complexo,
 * **Banco de Dados / Cloud:** Firebase Firestore (Compat 9.22) para persistência em tempo real das configurações e avaliações dos clientes.
 * **Ícones & Fontes:** FontAwesome 6.5.2, Google Fonts (Inter e Cinzel).
 
-## 🗂️ Estrutura do Projeto
+## Estrutura do Projeto
 
 Abaixo está o detalhamento de como as pastas e arquivos estão organizados para garantir a separação de responsabilidades:
 
