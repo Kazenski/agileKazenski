@@ -1071,7 +1071,6 @@ const ConfigTab = ({ model }) => {
             content += `\n`;
         });
 
-        // Criação dinâmica do arquivo no navegador
         const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -1081,6 +1080,74 @@ const ConfigTab = ({ model }) => {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
+    };
+
+    const handleExportPdf = () => {
+        // Inicializa o PDF no formato Landscape (l), em pontos (pt), folha A4
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'pt', 'a4');
+
+        // Cabeçalho do Documento
+        doc.setFontSize(18);
+        doc.setTextColor(30, 64, 175); // Azul da paleta do sistema
+        doc.text("Radar de Maturidade Ágil - Estrutura de Avaliação", 40, 40);
+
+        doc.setFontSize(9);
+        doc.setTextColor(100);
+        doc.text(`Gerado em: ${new Date().toLocaleString()}`, 40, 55);
+
+        let startY = 80; // Posição vertical inicial para a primeira tabela
+
+        model.forEach((eixo, i) => {
+            if (eixo.hidden) return;
+
+            // Monta as linhas da tabela combinando Subgrupo, Papel e Texto
+            const tableBody = [];
+            eixo.subgrupos.forEach(sub => {
+                if (sub.hidden) return;
+                sub.perguntas.forEach(perg => {
+                    if (perg.hidden) return;
+                    tableBody.push([
+                        sub.nome,
+                        perg.papel,
+                        perg.texto
+                    ]);
+                });
+            });
+
+            if (tableBody.length > 0) {
+                doc.autoTable({
+                    startY: startY,
+                    head: [[`EIXO ${i + 1}: ${eixo.nome.toUpperCase()}`, 'PAPEL', 'CRITÉRIO DE AVALIAÇÃO']],
+                    body: tableBody,
+                    theme: 'grid',
+                    styles: {
+                        fontSize: 8, // Letra diminuída propositalmente para caber mais contexto
+                        cellPadding: 5,
+                        textColor: [50, 50, 50]
+                    },
+                    headStyles: {
+                        fillColor: [30, 58, 138],
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold'
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 120, fontStyle: 'bold' },    // Coluna do Subgrupo
+                        1: { cellWidth: 80, fontStyle: 'italic' },   // Coluna do Papel
+                        2: { cellWidth: 'auto' }                     // O Texto ocupa todo o restante da tela
+                    },
+                    margin: { left: 40, right: 40 },
+                    // Essa propriedade lida com eixos grandes, quebrando a página automaticamente
+                    pageBreak: 'auto'
+                });
+
+                // Atualiza o Y para a próxima tabela, adicionando 30pt de margem após a tabela atual
+                startY = doc.lastAutoTable.finalY + 30;
+            }
+        });
+
+        // Salva e faz o download
+        doc.save(`radar_estrutura_${new Date().toISOString().split('T')[0]}.pdf`);
     };
 
     return (
@@ -1093,21 +1160,29 @@ const ConfigTab = ({ model }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Card de Exportação TXT */}
+                {/* Card de Exportação de Dados */}
                 <div className="bg-slate-800/50 p-6 rounded-xl border border-blue-800 space-y-4 shadow-xl">
                     <h3 className="text-sm font-bold text-blue-400 uppercase tracking-widest border-b border-blue-900 pb-2 flex items-center">
                         <i className="fas fa-file-export mr-2 text-lg"></i> Exportação de Dados
                     </h3>
                     <p className="text-[10px] text-blue-100/70 leading-relaxed">
-                        Faça o download de todos os eixos, subgrupos e perguntas em formato de texto simples (.txt).
-                        Esta funcionalidade é ideal para enviar a estrutura atual para revisão assíncrona com o time de especialistas ou stakeholders.
+                        Faça o download de todos os eixos, subgrupos e perguntas ativos na ferramenta.
+                        Escolha entre o formato de texto simples (TXT) para leitura rápida, ou um documento formalizado e estruturado (PDF) horizontal com divisão em tabelas.
                     </p>
-                    <button
-                        onClick={handleExportTxt}
-                        className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-lg text-[10px] font-bold uppercase shadow-lg tracking-widest flex justify-center items-center gap-2 transition-all mt-4"
-                    >
-                        <i className="fas fa-download"></i> Baixar Estrutura Completa (TXT)
-                    </button>
+                    <div className="flex flex-col gap-3 mt-4">
+                        <button
+                            onClick={handleExportTxt}
+                            className="w-full bg-slate-800 hover:bg-slate-700 text-white py-3 rounded-lg text-[10px] font-bold uppercase shadow-lg tracking-widest flex justify-center items-center gap-2 transition-all border border-blue-900"
+                        >
+                            <i className="fas fa-file-alt"></i> Exportar Texto Simples (TXT)
+                        </button>
+                        <button
+                            onClick={handleExportPdf}
+                            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-lg text-[10px] font-bold uppercase shadow-lg tracking-widest flex justify-center items-center gap-2 transition-all border border-blue-500"
+                        >
+                            <i className="fas fa-file-pdf"></i> Exportar Documento Estruturado (PDF)
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,9 +1,10 @@
 :root {
-    --fundo: #0f172a;       /* Slate 900 - Fundo principal escuro e clean */
-    --painel: #1e293b;      /* Slate 800 - Fundo dos modais e painéis */
-    --painel-claro: #334155;/* Slate 700 - Destaques secundários */
-    --texto: #f8fafc;       /* Slate 50 - Texto claro e contrastante */
-    --destaque: #3b82f6;    /* Blue 500 - Cor tecnológica primária */
+    /* Tons de Azul de TI suave e noturno */
+    --fundo: #0c1527;       /* Azul profundo suave */
+    --painel: #13223f;      /* Azul intermediário (substitui o slate-800) */
+    --painel-claro: #1d335a;/* Azul de destaque (substitui o slate-700) */
+    --texto: #f8fafc;       
+    --destaque: #3b82f6;    
 }
 
 body { 
@@ -13,6 +14,11 @@ body {
     overflow-x: hidden; 
     font-size: 10px; 
 }
+
+.bg-\\[\\#0f172a\\] { background-color: var(--fundo) !important; }
+.bg-slate-900 { background-color: var(--fundo) !important; border-color: var(--painel-claro) !important; }
+.bg-slate-800 { background-color: var(--painel) !important; border-color: var(--painel-claro) !important; }
+.bg-[#1e293b] { background-color: var(--painel) !important; }
 
 .font-cinzel { font-family: 'Cinzel', serif; }
 
