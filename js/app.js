@@ -1045,7 +1045,7 @@ GERE UM PLANO DE AÇÃO CONTENDO:
 };
 
 // --- ABA CONFIGURAÇÕES ---
-const ConfigTab = ({ model }) => {
+const ConfigTab = ({ model, respostas, roles, activeAss }) => {
 
     const handleExportTxt = () => {
         let content = "RADAR DE MATURIDADE ÁGIL - REVISÃO DE ESTRUTURA\n";
@@ -1082,35 +1082,51 @@ const ConfigTab = ({ model }) => {
         URL.revokeObjectURL(url);
     };
 
+    const calcScore = (answers, questionList) => {
+        let sum = 0, count = 0;
+        questionList.forEach(q => {
+            if (answers[q.id] > 0) { sum += answers[q.id]; count++; }
+        });
+        return count > 0 ? (sum / count) : 0;
+    };
+
     const handleExportPdf = () => {
-        // Inicializa o PDF no formato Landscape (l), em pontos (pt), folha A4
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('l', 'pt', 'a4');
 
         // Cabeçalho do Documento
         doc.setFontSize(18);
-        doc.setTextColor(30, 64, 175); // Azul da paleta do sistema
-        doc.text("Radar de Maturidade Ágil - Estrutura de Avaliação", 40, 40);
+        doc.setTextColor(30, 64, 175);
+        doc.text("Radar de Maturidade Ágil - Relatório de Avaliação", 40, 40);
 
-        doc.setFontSize(9);
+        doc.setFontSize(10);
         doc.setTextColor(100);
-        doc.text(`Gerado em: ${new Date().toLocaleString()}`, 40, 55);
+        const clientName = activeAss ? activeAss.clientName : "Não salvo";
+        const assessmentName = activeAss ? activeAss.assessmentName : "Avaliação em Andamento";
+        doc.text(`Cliente: ${clientName} | Avaliação: ${assessmentName}`, 40, 55);
+        doc.text(`Gerado em: ${new Date().toLocaleString()}`, 40, 70);
 
-        let startY = 80; // Posição vertical inicial para a primeira tabela
+        let startY = 90;
 
+        // 1. GERAR TABELAS DE RESPOSTAS
         model.forEach((eixo, i) => {
             if (eixo.hidden) return;
 
-            // Monta as linhas da tabela combinando Subgrupo, Papel e Texto
             const tableBody = [];
             eixo.subgrupos.forEach(sub => {
                 if (sub.hidden) return;
                 sub.perguntas.forEach(perg => {
                     if (perg.hidden) return;
+
+                    // Mapeia a nota exata do usuário
+                    const val = respostas[perg.id] || 0;
+                    const labelNota = RATING_MAP[val] || "N/A";
+
                     tableBody.push([
                         sub.nome,
                         perg.papel,
-                        perg.texto
+                        perg.texto,
+                        labelNota
                     ]);
                 });
             });
@@ -1118,36 +1134,87 @@ const ConfigTab = ({ model }) => {
             if (tableBody.length > 0) {
                 doc.autoTable({
                     startY: startY,
-                    head: [[`EIXO ${i + 1}: ${eixo.nome.toUpperCase()}`, 'PAPEL', 'CRITÉRIO DE AVALIAÇÃO']],
+                    head: [[`EIXO ${i + 1}: ${eixo.nome.toUpperCase()}`, 'PAPEL', 'CRITÉRIO DE AVALIAÇÃO', 'NOTA']],
                     body: tableBody,
                     theme: 'grid',
-                    styles: {
-                        fontSize: 8, // Letra diminuída propositalmente para caber mais contexto
-                        cellPadding: 5,
-                        textColor: [50, 50, 50]
-                    },
-                    headStyles: {
-                        fillColor: [30, 58, 138],
-                        textColor: [255, 255, 255],
-                        fontStyle: 'bold'
-                    },
+                    styles: { fontSize: 8, cellPadding: 5, textColor: [50, 50, 50] },
+                    headStyles: { fillColor: [30, 58, 138], textColor: [255, 255, 255], fontStyle: 'bold' },
                     columnStyles: {
-                        0: { cellWidth: 120, fontStyle: 'bold' },    // Coluna do Subgrupo
-                        1: { cellWidth: 80, fontStyle: 'italic' },   // Coluna do Papel
-                        2: { cellWidth: 'auto' }                     // O Texto ocupa todo o restante da tela
+                        0: { cellWidth: 100, fontStyle: 'bold' },
+                        1: { cellWidth: 70, fontStyle: 'italic' },
+                        2: { cellWidth: 'auto' },
+                        3: { cellWidth: 70, halign: 'center', fontStyle: 'bold' }
                     },
                     margin: { left: 40, right: 40 },
-                    // Essa propriedade lida com eixos grandes, quebrando a página automaticamente
                     pageBreak: 'auto'
                 });
 
-                // Atualiza o Y para a próxima tabela, adicionando 30pt de margem após a tabela atual
                 startY = doc.lastAutoTable.finalY + 30;
             }
         });
 
+        // 2. GERAR GRÁFICO COMPARATIVO POR PAPÉIS (Em uma nova página)
+        doc.addPage();
+        doc.setFontSize(16);
+        doc.setTextColor(30, 64, 175);
+        doc.text("Gráfico Comparativo de Maturidade por Papéis", 40, 40);
+
+        // Prepara os dados do gráfico baseado nas respostas atuais
+        const activeRoles = roles.filter(r => !r.hidden);
+        const roleChartData = {
+            labels: model.filter(e => !e.hidden).map(e => e.nome),
+            datasets: activeRoles.map((role, idx) => {
+                const color = `hsla(${210 + (idx * 30)}, 70%, 50%, 0.4)`;
+                const border = `hsla(${210 + (idx * 30)}, 70%, 50%, 1)`;
+                return {
+                    label: role.nome,
+                    backgroundColor: color,
+                    borderColor: border,
+                    borderWidth: 2,
+                    data: model.filter(e => !e.hidden).map(axis => {
+                        const roleQs = [];
+                        axis.subgrupos.forEach(s => s.perguntas.forEach(p => {
+                            if (!p.hidden && p.papel === role.nome) roleQs.push(p);
+                        }));
+                        return calcScore(respostas, roleQs);
+                    })
+                };
+            })
+        };
+
+        // Cria um canvas temporário na memória para desenhar o gráfico
+        const canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 500;
+
+        const tempChart = new Chart(canvas, {
+            type: 'radar',
+            data: roleChartData,
+            options: {
+                responsive: false,
+                animation: false, // Fundamental ser false para injetar instantaneamente no PDF
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(0, 0, 0, 0.2)' },
+                        grid: { color: 'rgba(0, 0, 0, 0.2)' },
+                        pointLabels: { color: '#334155', font: { size: 12, weight: 'bold' } }, // Cor escura para aparecer no PDF branco
+                        ticks: { display: false, min: 0, max: 5, stepSize: 1 }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'right', labels: { color: '#334155', font: { size: 12 } } }
+                }
+            }
+        });
+
+        // Extrai a imagem do canvas temporário e adiciona ao PDF
+        const chartImg = canvas.toDataURL('image/png', 1.0);
+        doc.addImage(chartImg, 'PNG', 40, 60, 600, 375); // Ajustado para manter proporção
+        tempChart.destroy();
+
         // Salva e faz o download
-        doc.save(`radar_estrutura_${new Date().toISOString().split('T')[0]}.pdf`);
+        const fileName = activeAss ? `radar_${activeAss.clientName}_${new Date().toISOString().split('T')[0]}.pdf` : 'radar_estrutura.pdf';
+        doc.save(fileName);
     };
 
     return (
@@ -1160,27 +1227,26 @@ const ConfigTab = ({ model }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Card de Exportação de Dados */}
                 <div className="bg-slate-800/50 p-6 rounded-xl border border-blue-800 space-y-4 shadow-xl">
                     <h3 className="text-sm font-bold text-blue-400 uppercase tracking-widest border-b border-blue-900 pb-2 flex items-center">
                         <i className="fas fa-file-export mr-2 text-lg"></i> Exportação de Dados
                     </h3>
                     <p className="text-[10px] text-blue-100/70 leading-relaxed">
-                        Faça o download de todos os eixos, subgrupos e perguntas ativos na ferramenta.
-                        Escolha entre o formato de texto simples (TXT) para leitura rápida, ou um documento formalizado e estruturado (PDF) horizontal com divisão em tabelas.
+                        Faça o download de todos os eixos, subgrupos e respostas ativas na ferramenta.
+                        Escolha entre o formato de texto simples (TXT) para leitura rápida, ou um documento formalizado e estruturado (PDF) contendo os gráficos e pontuações do cliente atual.
                     </p>
                     <div className="flex flex-col gap-3 mt-4">
                         <button
                             onClick={handleExportTxt}
                             className="w-full bg-slate-800 hover:bg-slate-700 text-white py-3 rounded-lg text-[10px] font-bold uppercase shadow-lg tracking-widest flex justify-center items-center gap-2 transition-all border border-blue-900"
                         >
-                            <i className="fas fa-file-alt"></i> Exportar Texto Simples (TXT)
+                            <i className="fas fa-file-alt"></i> Exportar Estrutura (TXT)
                         </button>
                         <button
                             onClick={handleExportPdf}
                             className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-lg text-[10px] font-bold uppercase shadow-lg tracking-widest flex justify-center items-center gap-2 transition-all border border-blue-500"
                         >
-                            <i className="fas fa-file-pdf"></i> Exportar Documento Estruturado (PDF)
+                            <i className="fas fa-file-pdf"></i> Exportar Relatório com Gráficos (PDF)
                         </button>
                     </div>
                 </div>
@@ -1297,8 +1363,7 @@ const MainApp = () => {
                 ) : tab === 'plano_acao' ? (
                     <ActionPlanTab model={model} respostas={respostas} activeAss={activeAss} />
                 ) : (
-                    <ConfigTab model={model} />
-                )}
+                    <ConfigTab model={model} respostas={respostas} roles={roles} activeAss={activeAss} />)}
             </main>
 
             <footer className="py-8 text-center text-slate-700 text-[9px] font-black tracking-[1em] uppercase opacity-40">
