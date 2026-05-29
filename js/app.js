@@ -1185,19 +1185,19 @@ const ConfigTab = ({ model, respostas, roles, activeAss }) => {
         // Cria um canvas temporário na memória para desenhar o gráfico
         const canvas = document.createElement('canvas');
         canvas.width = 800;
-        canvas.height = 500;
+        canvas.height = 460;
 
         const tempChart = new Chart(canvas, {
             type: 'radar',
             data: roleChartData,
             options: {
                 responsive: false,
-                animation: false, // Fundamental ser false para injetar instantaneamente no PDF
+                animation: false,
                 scales: {
                     r: {
                         angleLines: { color: 'rgba(0, 0, 0, 0.2)' },
                         grid: { color: 'rgba(0, 0, 0, 0.2)' },
-                        pointLabels: { color: '#334155', font: { size: 12, weight: 'bold' } }, // Cor escura para aparecer no PDF branco
+                        pointLabels: { color: '#334155', font: { size: 12, weight: 'bold' } }, 
                         ticks: { display: false, min: 0, max: 5, stepSize: 1 }
                     }
                 },
@@ -1209,8 +1209,102 @@ const ConfigTab = ({ model, respostas, roles, activeAss }) => {
 
         // Extrai a imagem do canvas temporário e adiciona ao PDF
         const chartImg = canvas.toDataURL('image/png', 1.0);
-        doc.addImage(chartImg, 'PNG', 40, 60, 600, 375); // Ajustado para manter proporção
+        doc.addImage(chartImg, 'PNG', 40, 60, 520, 300); 
         tempChart.destroy();
+
+        // 3. ADICIONAR COMENTÁRIOS DO AGILISTA (Abaixo do gráfico principal)
+        const currentY = 380;
+        doc.setFontSize(14);
+        doc.setTextColor(30, 64, 175);
+        doc.text("Notas e Comentários do Agilista", 40, currentY);
+        
+        doc.setFontSize(10);
+        doc.setTextColor(50, 50, 50);
+        
+        const notasAgilista = (activeAss && activeAss.planoAcao && activeAss.planoAcao.generalNotes)
+            ? activeAss.planoAcao.generalNotes
+            : "Nenhuma observação ou comentário registrado pelo agilista para esta avaliação.";
+
+        const splitNotas = doc.splitTextToSize(notasAgilista, 760);
+        doc.text(splitNotas, 40, currentY + 20);
+
+        // 4. NOVA PÁGINA: MINI-GRÁFICOS SEPARADOS POR PAPEL
+        if (activeRoles.length > 0) {
+            doc.addPage();
+            doc.setFontSize(16);
+            doc.setTextColor(30, 64, 175);
+            doc.text("Maturidade Ágil - Visão Individual por Papel", 40, 40);
+
+            let chartStartX = 40;
+            let chartStartY = 70;
+            const miniChartWidth = 350;
+            const miniChartHeight = 220;
+            let colIndex = 0;
+
+            activeRoles.forEach((role, idx) => {
+                // Se ultrapassar o limite inferior da página, cria nova página
+                if (chartStartY + miniChartHeight > 550) {
+                    doc.addPage();
+                    chartStartY = 40;
+                    chartStartX = 40;
+                    colIndex = 0;
+                }
+
+                const singleRoleData = {
+                    labels: model.filter(e => !e.hidden).map(e => e.nome),
+                    datasets: [{
+                        label: role.nome,
+                        backgroundColor: `hsla(${210 + (idx * 30)}, 70%, 50%, 0.4)`,
+                        borderColor: `hsla(${210 + (idx * 30)}, 70%, 50%, 1)`,
+                        borderWidth: 2,
+                        data: model.filter(e => !e.hidden).map(axis => {
+                            const roleQs = [];
+                            axis.subgrupos.forEach(s => s.perguntas.forEach(p => {
+                                if (!p.hidden && p.papel === role.nome) roleQs.push(p);
+                            }));
+                            return calcScore(respostas, roleQs);
+                        })
+                    }]
+                };
+
+                const miniCanvas = document.createElement('canvas');
+                miniCanvas.width = 600;
+                miniCanvas.height = 400;
+
+                const miniChart = new Chart(miniCanvas, {
+                    type: 'radar',
+                    data: singleRoleData,
+                    options: {
+                        responsive: false,
+                        animation: false,
+                        scales: {
+                            r: {
+                                angleLines: { color: 'rgba(0, 0, 0, 0.2)' },
+                                grid: { color: 'rgba(0, 0, 0, 0.2)' },
+                                pointLabels: { color: '#334155', font: { size: 10, weight: 'bold' } },
+                                ticks: { display: false, min: 0, max: 5, stepSize: 1 }
+                            }
+                        },
+                        plugins: {
+                            legend: { position: 'top', labels: { color: '#334155', font: { size: 14, weight: 'bold' } } }
+                        }
+                    }
+                });
+
+                const miniImg = miniCanvas.toDataURL('image/png', 1.0);
+                doc.addImage(miniImg, 'PNG', chartStartX, chartStartY, miniChartWidth, miniChartHeight);
+                miniChart.destroy();
+
+                colIndex++;
+                if (colIndex >= 2) { // 2 gráficos por linha
+                    colIndex = 0;
+                    chartStartX = 40;
+                    chartStartY += miniChartHeight + 30;
+                } else {
+                    chartStartX += miniChartWidth + 30; // Espaçamento horizontal
+                }
+            });
+        }
 
         // Salva e faz o download
         const fileName = activeAss ? `radar_${activeAss.clientName}_${new Date().toISOString().split('T')[0]}.pdf` : 'radar_estrutura.pdf';
