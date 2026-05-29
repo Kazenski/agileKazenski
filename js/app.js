@@ -1307,7 +1307,11 @@ const ConfigTab = ({ model, respostas, roles, activeAss }) => {
         }
 
         // Salva e faz o download
-        const fileName = activeAss ? `radar_${activeAss.clientName}_${new Date().toISOString().split('T')[0]}.pdf` : 'radar_estrutura.pdf';
+        const dataAtual = new Date().toISOString().split('T')[0];
+        const fileName = activeAss 
+            ? `${activeAss.clientName}-${activeAss.assessmentName}-${dataAtual}.pdf` 
+            : `radar-estrutura-${dataAtual}.pdf`;
+        
         doc.save(fileName);
     };
 
