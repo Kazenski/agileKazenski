@@ -23,6 +23,7 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="data:," />
 </head>
 
 <body>
@@ -30,7 +31,15 @@
     <script src="core/firebase.js"></script>
     <script src="core/util.js"></script>
 
-    <script type="text/babel" data-type="module" data-presets="react,env" src="js/app.js"></script>
+    <script>
+        Babel.registerPreset('react-classic', {
+            presets: [
+                [Babel.availablePresets['react'], { "runtime": "classic" }]
+            ]
+        });
+    </script>
+
+    <script type="text/babel" data-presets="react-classic,env" src="js/app.js"></script>
 </body>
 
 </html>
